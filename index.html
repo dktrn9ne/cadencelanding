@@ -427,11 +427,11 @@
     <div class="reveal">
       <h2>Payroll shouldn't make people wait.<br><em>Let's give every payment a pulse.</em></h2>
       <p>Set up a wallet and send your first streaming payment in a few minutes — freelancer, studio, or full team.</p>
-      <form class="final-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='You\'re on the list';">
-        <input type="email" placeholder="you@company.com" required>
+      <form class="final-form" action="https://formspree.io/f/mojgkzay" method="POST">
+        <input type="email" name="email" placeholder="you@company.com" required>
         <button type="submit" class="btn btn-terra">Get started</button>
       </form>
-      <div class="final-note">Local testing mode — your access input is never saved.</div>
+      <div class="final-note">Your email is sent through Formspree.</div>
     </div>
   </div>
 </section>
