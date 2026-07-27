@@ -108,24 +108,43 @@
   }
   .pattern svg{display:block; width:100%; height:100%; overflow:visible}
   .pattern-wave{
-    left:50%;
+    left:-22vw;
     top:78px;
-    width:280px;
+    width:144vw;
     height:118px;
-    opacity:.42;
-    transform:translateX(-62%);
+    opacity:.36;
+    overflow:visible;
   }
+  .pattern-wave svg{width:116%; margin-left:-8%; animation:waveDrift 18s linear infinite}
   .pattern-wave path{fill:none; stroke:var(--forest); stroke-width:1.2}
   .pattern-wave path:nth-child(1),
   .pattern-wave path:nth-child(2){stroke:var(--clay)}
+  @keyframes waveDrift{
+    0%{transform:translateX(-4%)}
+    100%{transform:translateX(4%)}
+  }
   .pattern-dots{
     right:5%;
     bottom:20px;
     width:118px;
     height:88px;
     opacity:.55;
-    background-image:radial-gradient(circle, var(--clay) 1.8px, transparent 2px);
-    background-size:18px 18px;
+  }
+  .pattern-dots span{
+    position:absolute;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:var(--clay);
+    opacity:.45;
+    transform:translate3d(0,0,0);
+    animation:dotWander var(--dot-duration, 4s) ease-in-out infinite alternate;
+    animation-delay:var(--dot-delay, 0s);
+  }
+  @keyframes dotWander{
+    0%{opacity:.18; transform:translate3d(0,0,0) scale(.82)}
+    42%{opacity:.72}
+    100%{opacity:.38; transform:translate3d(var(--dot-x, 5px), var(--dot-y, -5px), 0) scale(1.08)}
   }
   .pattern-rings{
     position:absolute;
@@ -345,7 +364,7 @@
     background:var(--sun);
     opacity:.6;
   }
-  .final .pattern-wave{left:auto; right:12%; top:44px; transform:none; width:330px; height:116px; opacity:.22}
+  .final .pattern-wave{left:-12vw; right:auto; top:44px; width:124vw; height:116px; opacity:.2}
   .final .pattern-wave path{stroke:#fff8ec}
   .final .pattern-wave path:nth-child(1),
   .final .pattern-wave path:nth-child(2){stroke:var(--clay)}
@@ -370,7 +389,7 @@
     .steps{grid-template-columns:1fr}
     .step{border-right:0; border-bottom:1px solid var(--line)}
     .step:last-child{border-bottom:0}
-    .pattern-wave{left:auto; right:16px; transform:none; width:190px; opacity:.26}
+    .pattern-wave{left:-30vw; width:160vw; opacity:.22}
     #product .pattern-rings{right:-70px; top:160px}
     #product .pattern-lines{display:none}
     #ecosystem .pattern-dots{left:auto; right:16px; top:110px}
@@ -388,8 +407,8 @@
     section{padding:64px 0}
     .big-c svg{width:144px; height:144px}
     .foot-links{width:100%; justify-content:space-between}
-    .pattern-wave,
     .pattern-lines{display:none}
+    .pattern-wave{left:-42vw; width:184vw; opacity:.18}
     .pattern-dots{opacity:.28}
     #product .pattern-rings{width:126px; height:126px; right:-74px; top:190px; opacity:.5}
   }
@@ -424,13 +443,13 @@
 <main id="top">
   <section class="hero">
     <div class="pattern pattern-wave" aria-hidden="true">
-      <svg viewBox="0 0 280 118">
-        <path d="M0 68 C42 84 82 84 124 64 S210 22 280 38"/>
-        <path d="M0 58 C44 76 86 78 128 60 S212 18 280 30"/>
-        <path d="M0 48 C46 68 88 72 132 56 S214 18 280 24"/>
-        <path d="M0 38 C48 60 92 66 136 52 S216 20 280 20"/>
-        <path d="M0 28 C50 52 96 58 140 48 S218 24 280 18"/>
-        <path d="M0 18 C52 44 100 50 144 44 S220 28 280 20"/>
+      <svg viewBox="0 0 1200 118" preserveAspectRatio="none">
+        <path d="M0 72 C130 92 238 92 360 66 S590 20 760 44 S1030 78 1200 46"/>
+        <path d="M0 62 C130 84 242 86 365 62 S594 18 762 36 S1032 70 1200 38"/>
+        <path d="M0 52 C132 76 246 80 370 58 S598 18 764 30 S1034 62 1200 32"/>
+        <path d="M0 42 C134 68 250 72 375 54 S602 20 766 26 S1036 54 1200 28"/>
+        <path d="M0 32 C136 58 254 64 380 50 S606 24 768 24 S1038 48 1200 28"/>
+        <path d="M0 22 C138 50 258 54 385 46 S610 30 770 26 S1040 44 1200 34"/>
       </svg>
     </div>
     <div class="pattern pattern-dots" aria-hidden="true"></div>
@@ -661,13 +680,13 @@
 
   <section class="final" id="get-started">
     <div class="pattern pattern-wave" aria-hidden="true">
-      <svg viewBox="0 0 280 118">
-        <path d="M0 68 C42 84 82 84 124 64 S210 22 280 38"/>
-        <path d="M0 58 C44 76 86 78 128 60 S212 18 280 30"/>
-        <path d="M0 48 C46 68 88 72 132 56 S214 18 280 24"/>
-        <path d="M0 38 C48 60 92 66 136 52 S216 20 280 20"/>
-        <path d="M0 28 C50 52 96 58 140 48 S218 24 280 18"/>
-        <path d="M0 18 C52 44 100 50 144 44 S220 28 280 20"/>
+      <svg viewBox="0 0 1200 118" preserveAspectRatio="none">
+        <path d="M0 72 C130 92 238 92 360 66 S590 20 760 44 S1030 78 1200 46"/>
+        <path d="M0 62 C130 84 242 86 365 62 S594 18 762 36 S1032 70 1200 38"/>
+        <path d="M0 52 C132 76 246 80 370 58 S598 18 764 30 S1034 62 1200 32"/>
+        <path d="M0 42 C134 68 250 72 375 54 S602 20 766 26 S1036 54 1200 28"/>
+        <path d="M0 32 C136 58 254 64 380 50 S606 24 768 24 S1038 48 1200 28"/>
+        <path d="M0 22 C138 50 258 54 385 46 S610 30 770 26 S1040 44 1200 34"/>
       </svg>
     </div>
     <div class="pattern-lines" aria-hidden="true"></div>
@@ -714,6 +733,29 @@
   const MID = 32;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  function seedPatternDots(){
+    document.querySelectorAll(".pattern-dots").forEach((field, fieldIndex) => {
+      field.textContent = "";
+      const count = fieldIndex === 0 ? 28 : 42;
+
+      for(let i = 0; i < count; i += 1){
+        const dot = document.createElement("span");
+        const column = i % 7;
+        const row = Math.floor(i / 7);
+        const jitterX = Math.random() * 9 - 4.5;
+        const jitterY = Math.random() * 9 - 4.5;
+
+        dot.style.left = Math.min(94, column * 14 + 4 + jitterX) + "%";
+        dot.style.top = Math.min(92, row * 18 + 3 + jitterY) + "%";
+        dot.style.setProperty("--dot-x", (Math.random() * 14 - 7).toFixed(1) + "px");
+        dot.style.setProperty("--dot-y", (Math.random() * 14 - 7).toFixed(1) + "px");
+        dot.style.setProperty("--dot-duration", (reduced ? 12 : 2.8 + Math.random() * 4.6).toFixed(2) + "s");
+        dot.style.setProperty("--dot-delay", (Math.random() * -6).toFixed(2) + "s");
+        field.appendChild(dot);
+      }
+    });
+  }
+
   function buildWave(offset){
     let d = "M0," + MID;
     const bumpCenter = offset;
@@ -757,6 +799,7 @@
   }
 
   frame();
+  seedPatternDots();
   setInterval(tick, reduced ? 4000 : 220);
 </script>
 </body>
