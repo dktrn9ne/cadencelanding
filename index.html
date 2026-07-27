@@ -99,7 +99,102 @@
     background:var(--sun);
     opacity:.75;
   }
-  .hero-grid{position:relative; display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,.92fr); gap:56px; align-items:center}
+  .hero-grid{position:relative; z-index:1; display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,.92fr); gap:56px; align-items:center}
+  .pattern{
+    position:absolute;
+    pointer-events:none;
+    z-index:0;
+    opacity:.9;
+  }
+  .pattern svg{display:block; width:100%; height:100%; overflow:visible}
+  .pattern-wave{
+    left:-22vw;
+    top:78px;
+    width:144vw;
+    height:118px;
+    opacity:.36;
+    overflow:visible;
+  }
+  .pattern-wave svg{width:116%; margin-left:-8%; animation:waveDrift 18s ease-in-out infinite alternate}
+  .pattern-wave path{
+    fill:none;
+    stroke:var(--forest);
+    stroke-width:1.2;
+    stroke-linecap:round;
+    stroke-dasharray:28 18 84 22;
+    animation:waveLineFlow var(--wave-speed, 11s) linear infinite;
+  }
+  .pattern-wave path:nth-child(1),
+  .pattern-wave path:nth-child(2){stroke:var(--clay)}
+  .pattern-wave path:nth-child(1){--wave-speed:9s}
+  .pattern-wave path:nth-child(2){--wave-speed:10.5s; animation-direction:reverse}
+  .pattern-wave path:nth-child(3){--wave-speed:12s}
+  .pattern-wave path:nth-child(4){--wave-speed:13.5s; animation-direction:reverse}
+  .pattern-wave path:nth-child(5){--wave-speed:15s}
+  .pattern-wave path:nth-child(6){--wave-speed:16.5s; animation-direction:reverse}
+  @keyframes waveDrift{
+    0%{transform:translateX(-4%)}
+    100%{transform:translateX(4%)}
+  }
+  @keyframes waveLineFlow{
+    to{stroke-dashoffset:-260}
+  }
+  .pattern-dots{
+    right:5%;
+    bottom:20px;
+    width:118px;
+    height:88px;
+    opacity:.55;
+  }
+  .pattern-dots span{
+    position:absolute;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:var(--clay);
+    opacity:.45;
+    transform:translate3d(0,0,0);
+    animation:dotWander var(--dot-duration, 4s) ease-in-out infinite alternate;
+    animation-delay:var(--dot-delay, 0s);
+  }
+  @keyframes dotWander{
+    0%{opacity:.18; transform:translate3d(0,0,0) scale(.82)}
+    42%{opacity:.72}
+    100%{opacity:.38; transform:translate3d(var(--dot-x, 5px), var(--dot-y, -5px), 0) scale(1.08)}
+  }
+  .pattern-rings{
+    position:absolute;
+    width:176px;
+    height:176px;
+    border-radius:50%;
+    border:1px solid rgba(234,215,154,.72);
+    box-shadow:
+      inset 0 0 0 18px transparent,
+      0 0 0 18px rgba(234,215,154,.08),
+      0 0 0 36px transparent,
+      0 0 0 37px rgba(234,215,154,.58),
+      0 0 0 56px transparent,
+      0 0 0 57px rgba(234,215,154,.42);
+  }
+  .pattern-lines{
+    position:absolute;
+    width:196px;
+    height:138px;
+    opacity:.34;
+    background:
+      repeating-linear-gradient(135deg, transparent 0 13px, rgba(31,45,36,.72) 13px 14px, transparent 14px 27px);
+  }
+  .pattern-lines:before,
+  .pattern-lines:after{
+    content:"";
+    position:absolute;
+    width:2px;
+    height:80px;
+    background:var(--clay);
+    transform:rotate(45deg);
+  }
+  .pattern-lines:before{right:44px; top:14px}
+  .pattern-lines:after{right:88px; bottom:8px; opacity:.55}
   .eyebrow{
     display:flex;
     align-items:center;
@@ -198,7 +293,10 @@
   .meaning-arrow strong{color:var(--clay)}
   .meaning-arrow p{margin:0; color:#625f56; line-height:1.6; font-size:14px}
 
-  .product-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  #product{position:relative; overflow:hidden}
+  #product .pattern-rings{right:calc(50% - 630px); top:128px; opacity:.75}
+  #product .pattern-lines{left:calc(50% - 660px); bottom:62px}
+  .product-grid{position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:18px}
   .panel{
     border:1px solid var(--line);
     background:rgba(255,249,236,.62);
@@ -241,6 +339,10 @@
   .card-art .chip{width:38px; height:28px; border-radius:6px; background:linear-gradient(135deg, #d7c398, #f4e6b4); border:1px solid #bca875; margin:22px 0}
   .card-art .visa{font-weight:800; letter-spacing:.08em; text-align:right}
 
+  #ecosystem{position:relative; overflow:hidden}
+  #ecosystem .section-head,
+  #ecosystem .ecosystem{position:relative; z-index:1}
+  #ecosystem .pattern-dots{left:calc(50% + 300px); top:96px; width:150px; height:110px; opacity:.42}
   .ecosystem{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
   .eco-card{
     min-height:170px;
@@ -278,6 +380,11 @@
     background:var(--sun);
     opacity:.6;
   }
+  .final .pattern-wave{left:-12vw; right:auto; top:44px; width:124vw; height:116px; opacity:.2}
+  .final .pattern-wave path{stroke:#fff8ec}
+  .final .pattern-wave path:nth-child(1),
+  .final .pattern-wave path:nth-child(2){stroke:var(--clay)}
+  .final .pattern-lines{right:4%; bottom:18px; opacity:.22; filter:invert(1)}
   .final .wrap{position:relative; z-index:1}
   .final h2 em{color:var(--clay); font-style:italic}
   .final p{color:#b9bfb4; line-height:1.7; max-width:560px}
@@ -298,6 +405,10 @@
     .steps{grid-template-columns:1fr}
     .step{border-right:0; border-bottom:1px solid var(--line)}
     .step:last-child{border-bottom:0}
+    .pattern-wave{left:-30vw; width:160vw; opacity:.22}
+    #product .pattern-rings{right:-70px; top:160px}
+    #product .pattern-lines{display:none}
+    #ecosystem .pattern-dots{left:auto; right:16px; top:110px}
   }
   @media(max-width:600px){
     .wrap{width:min(100% - 28px, 1180px)}
@@ -312,6 +423,10 @@
     section{padding:64px 0}
     .big-c svg{width:144px; height:144px}
     .foot-links{width:100%; justify-content:space-between}
+    .pattern-lines{display:none}
+    .pattern-wave{left:-42vw; width:184vw; opacity:.18}
+    .pattern-dots{opacity:.28}
+    #product .pattern-rings{width:126px; height:126px; right:-74px; top:190px; opacity:.5}
   }
 </style>
 </head>
@@ -343,6 +458,17 @@
 
 <main id="top">
   <section class="hero">
+    <div class="pattern pattern-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 118" preserveAspectRatio="none">
+        <path d="M0 72 C130 92 238 92 360 66 S590 20 760 44 S1030 78 1200 46"/>
+        <path d="M0 62 C130 84 242 86 365 62 S594 18 762 36 S1032 70 1200 38"/>
+        <path d="M0 52 C132 76 246 80 370 58 S598 18 764 30 S1034 62 1200 32"/>
+        <path d="M0 42 C134 68 250 72 375 54 S602 20 766 26 S1036 54 1200 28"/>
+        <path d="M0 32 C136 58 254 64 380 50 S606 24 768 24 S1038 48 1200 28"/>
+        <path d="M0 22 C138 50 258 54 385 46 S610 30 770 26 S1040 44 1200 34"/>
+      </svg>
+    </div>
+    <div class="pattern pattern-dots" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div>
         <div class="eyebrow">Real-time RLUSD payroll</div>
@@ -427,6 +553,8 @@
   </section>
 
   <section id="product">
+    <div class="pattern-rings" aria-hidden="true"></div>
+    <div class="pattern-lines" aria-hidden="true"></div>
     <div class="wrap">
       <div class="section-head">
         <div class="kicker">Product</div>
@@ -480,6 +608,7 @@
   </section>
 
   <section id="ecosystem">
+    <div class="pattern pattern-dots" aria-hidden="true"></div>
     <div class="wrap">
       <div class="section-head">
         <div class="kicker">Cadence ecosystem</div>
@@ -566,6 +695,17 @@
   </section>
 
   <section class="final" id="get-started">
+    <div class="pattern pattern-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 118" preserveAspectRatio="none">
+        <path d="M0 72 C130 92 238 92 360 66 S590 20 760 44 S1030 78 1200 46"/>
+        <path d="M0 62 C130 84 242 86 365 62 S594 18 762 36 S1032 70 1200 38"/>
+        <path d="M0 52 C132 76 246 80 370 58 S598 18 764 30 S1034 62 1200 32"/>
+        <path d="M0 42 C134 68 250 72 375 54 S602 20 766 26 S1036 54 1200 28"/>
+        <path d="M0 32 C136 58 254 64 380 50 S606 24 768 24 S1038 48 1200 28"/>
+        <path d="M0 22 C138 50 258 54 385 46 S610 30 770 26 S1040 44 1200 34"/>
+      </svg>
+    </div>
+    <div class="pattern-lines" aria-hidden="true"></div>
     <div class="wrap">
       <div class="kicker">Move money at the speed of work</div>
       <h2>Your income. Your cadence.<br><em>Real ownership, built on XRP.</em></h2>
@@ -608,6 +748,29 @@
   const W = 400;
   const MID = 32;
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function seedPatternDots(){
+    document.querySelectorAll(".pattern-dots").forEach((field, fieldIndex) => {
+      field.textContent = "";
+      const count = fieldIndex === 0 ? 28 : 42;
+
+      for(let i = 0; i < count; i += 1){
+        const dot = document.createElement("span");
+        const column = i % 7;
+        const row = Math.floor(i / 7);
+        const jitterX = Math.random() * 9 - 4.5;
+        const jitterY = Math.random() * 9 - 4.5;
+
+        dot.style.left = Math.min(94, column * 14 + 4 + jitterX) + "%";
+        dot.style.top = Math.min(92, row * 18 + 3 + jitterY) + "%";
+        dot.style.setProperty("--dot-x", (Math.random() * 14 - 7).toFixed(1) + "px");
+        dot.style.setProperty("--dot-y", (Math.random() * 14 - 7).toFixed(1) + "px");
+        dot.style.setProperty("--dot-duration", (reduced ? 12 : 2.8 + Math.random() * 4.6).toFixed(2) + "s");
+        dot.style.setProperty("--dot-delay", (Math.random() * -6).toFixed(2) + "s");
+        field.appendChild(dot);
+      }
+    });
+  }
 
   function buildWave(offset){
     let d = "M0," + MID;
@@ -652,6 +815,7 @@
   }
 
   frame();
+  seedPatternDots();
   setInterval(tick, reduced ? 4000 : 220);
 </script>
 </body>
