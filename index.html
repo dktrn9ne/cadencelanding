@@ -115,13 +115,29 @@
     opacity:.36;
     overflow:visible;
   }
-  .pattern-wave svg{width:116%; margin-left:-8%; animation:waveDrift 18s linear infinite}
-  .pattern-wave path{fill:none; stroke:var(--forest); stroke-width:1.2}
+  .pattern-wave svg{width:116%; margin-left:-8%; animation:waveDrift 18s ease-in-out infinite alternate}
+  .pattern-wave path{
+    fill:none;
+    stroke:var(--forest);
+    stroke-width:1.2;
+    stroke-linecap:round;
+    stroke-dasharray:28 18 84 22;
+    animation:waveLineFlow var(--wave-speed, 11s) linear infinite;
+  }
   .pattern-wave path:nth-child(1),
   .pattern-wave path:nth-child(2){stroke:var(--clay)}
+  .pattern-wave path:nth-child(1){--wave-speed:9s}
+  .pattern-wave path:nth-child(2){--wave-speed:10.5s; animation-direction:reverse}
+  .pattern-wave path:nth-child(3){--wave-speed:12s}
+  .pattern-wave path:nth-child(4){--wave-speed:13.5s; animation-direction:reverse}
+  .pattern-wave path:nth-child(5){--wave-speed:15s}
+  .pattern-wave path:nth-child(6){--wave-speed:16.5s; animation-direction:reverse}
   @keyframes waveDrift{
     0%{transform:translateX(-4%)}
     100%{transform:translateX(4%)}
+  }
+  @keyframes waveLineFlow{
+    to{stroke-dashoffset:-260}
   }
   .pattern-dots{
     right:5%;
