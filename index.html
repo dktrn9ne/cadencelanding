@@ -540,9 +540,39 @@
   @media(max-width:360px){
     .nav .brand > span:last-child{display:none}
   }
+
+  /* Accessibility: keyboard focus and skip link. The :where() wrapper keeps
+     specificity at zero so component styles still win; the ring itself uses
+     the forest ink on light surfaces and the sun on dark panels. */
+  :where(a, button, input, summary, [tabindex]):focus-visible{
+    outline:2px solid var(--forest);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+  .final :where(a, button, summary):focus-visible,
+  .pay-card :where(a, button, input):focus-visible,
+  .form input:focus-visible,
+  .nav-toggle:focus-visible{
+    outline-color:var(--sun);
+  }
+  .skip-link{
+    position:absolute;
+    left:16px;
+    top:-52px;
+    z-index:80;
+    padding:10px 18px;
+    border-radius:0 0 10px 10px;
+    background:var(--forest);
+    color:#fff8ec;
+    font-size:13px;
+    font-weight:700;
+    text-decoration:none;
+  }
+  .skip-link:focus{top:0}
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#top">Skip to content</a>
 <header class="nav">
   <div class="wrap nav-inner">
     <a class="brand" href="#top">
@@ -587,7 +617,7 @@
   </div>
 </header>
 
-<main id="top">
+<main id="top" tabindex="-1">
   <section class="hero">
     <div class="pattern pattern-wave" aria-hidden="true">
       <svg viewBox="0 0 1200 118" preserveAspectRatio="none">
