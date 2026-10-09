@@ -569,6 +569,15 @@
     text-decoration:none;
   }
   .skip-link:focus{top:0}
+
+  /* Accessibility: honor the OS reduced-motion setting. Only CSS animation
+     is silenced here; the JS reduced-motion path (dots, wave, counter) is
+     handled separately at runtime. */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .pattern-wave svg,.pattern-wave path,.pattern-dots span,.live:before{animation:none !important}
+    .btn,.btn:hover{transform:none;transition:none}
+  }
 </style>
 </head>
 <body>
@@ -863,7 +872,7 @@
         </div>
         <button class="btn btn-secondary" id="access-submit" type="submit">Request access</button>
         <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
-        <div class="form-success" id="form-success" hidden>
+        <div class="form-success" id="form-success" role="status" hidden>
           <strong>You're in — we'll reach out soon.</strong>
           <span>Watch your inbox for early access details.</span>
           <button type="button" class="form-reset" id="form-reset">Use a different email</button>
