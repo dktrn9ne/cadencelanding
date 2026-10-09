@@ -1,0 +1,110 @@
+# Quality gates (PR 8). Fail severity from day one for: broken links,
+# accessibility, responsive overflow, browser journeys, Lighthouse
+# performance/accessibility budgets. Metadata is strict (the SEO/social
+# package has landed, satisfying the staged-severity flip).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: Broken links and anchors (lychee)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Serve the page locally
+        run: |
+          npm install --no-audit --no-fund
+          npx serve . -l 4173 --no-clipboard > /tmp/serve.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:4173/ > /dev/null 2>&1 && break
+            sleep 1
+          done
+      # Excluded: https://formspree.io/f/mojgkzay — the form endpoint is
+      # POST-only by design; a 400 on GET is its HEALTHY signature, so a link
+      # checker would alarm forever. Its health is owned by the uptime
+      # workflow (form-endpoint job asserts the 400 signature + status page).
+      - name: Check links and fragments
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --verbose
+            --no-progress
+            --include-fragments
+            --exclude 'https://formspree\.io/f/mojgkzay'
+            'http://localhost:4173/'
+          fail: true
+
+  a11y:
+    name: Accessibility (pa11y WCAG 2 AA)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Serve the page locally
+        run: |
+          npx serve . -l 4173 --no-clipboard > /tmp/serve.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:4173/ > /dev/null 2>&1 && break
+            sleep 1
+          done
+      - run: npm run test:a11y
+
+  e2e:
+    name: Browser journeys (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+
+  lighthouse:
+    name: Budgets (Lighthouse CI)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Run Lighthouse CI
+        run: npx lhci autorun
+        env:
+          # LHCI drives its own Chrome; GitHub runners ship Google Chrome.
+          CHROME_PATH: /usr/bin/google-chrome
+      # The SEO budget is error severity in lighthouserc.js (staged-severity
+      # flip satisfied by the SEO/social package landing on main).
+
+  metadata:
+    name: Metadata presence (strict)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # The SEO/social package ("PR 6" in the spec) has landed on main, so
+      # metadata presence now gates red on any absence (staged severity flip).
+      - run: npm run test:metadata
+        env:
+          METADATA_STRICT: '1'
