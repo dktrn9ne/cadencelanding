@@ -420,9 +420,9 @@
   .final h2 em{color:var(--clay); font-style:italic}
   .final p{color:#b9bfb4; line-height:1.7; max-width:560px}
   .form{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-top:24px}
-  .form input{min-height:42px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
+  .form input{width:100%; min-height:42px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
   .form input::placeholder{color:#858c84}
-  .form-field{display:flex; flex-direction:column; gap:6px}
+  .form-field{display:flex; flex-direction:column; gap:6px; flex:0 1 340px; min-width:240px}
   .form-field label{font-size:12px; font-weight:600; color:#d8d2c2; letter-spacing:.02em}
   .form input.is-invalid{border-color:var(--clay)}
   .form-status{flex-basis:100%; margin:0; font-size:13px; line-height:1.5; color:#e7dfc9}
