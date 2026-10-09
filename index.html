@@ -325,6 +325,15 @@
   .pay-card{contain:layout}
   [data-paused],[data-paused] *,[data-paused] *:before,[data-paused] *:after{animation-play-state:paused !important}
   #who,#product,#ecosystem,#how,.final{content-visibility:auto; contain-intrinsic-size:auto 640px}
+
+  /* Reduced motion: no continuous decorative animation, period. Dots hold
+     their seeded positions, waves render as static strokes, the pay-card
+     wave paints its first frame, and the pulse stills. The amount ticker is
+     content, not motion — it keeps its 4s reduced cadence. */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .pattern-wave svg,.pattern-wave path,.pattern-dots span,.live:before{animation:none !important}
+  }
   .amount{font-family:var(--mono); font-size:46px; line-height:1; margin-bottom:8px}
   .amount span{color:var(--clay)}
   .micro{color:#9da69d; font-size:12px; margin-bottom:26px}
