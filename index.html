@@ -201,8 +201,6 @@
   .pattern-wave path:nth-child(2){--wave-speed:10.5s; animation-direction:reverse}
   .pattern-wave path:nth-child(3){--wave-speed:12s}
   .pattern-wave path:nth-child(4){--wave-speed:13.5s; animation-direction:reverse}
-  .pattern-wave path:nth-child(5){--wave-speed:15s}
-  .pattern-wave path:nth-child(6){--wave-speed:16.5s; animation-direction:reverse}
   @keyframes waveDrift{
     0%{transform:translateX(-4%)}
     100%{transform:translateX(4%)}
@@ -318,6 +316,15 @@
   .live{display:flex; align-items:center; gap:7px; color:var(--sun); font-family:var(--mono); font-size:10px; letter-spacing:.12em}
   .live:before{content:""; width:6px; height:6px; border-radius:50%; background:var(--clay); animation:pulse 1.3s infinite}
   @keyframes pulse{50%{opacity:.35}}
+
+  /* Decorative containers and the pay card opt into containment; the
+     IntersectionObserver only ever toggles the pause attribute. Paint
+     containment is limited to .pattern: the pay-card's :after ring bleeds
+     96px outside the card and must stay unclipped. */
+  .pattern{contain:layout paint}
+  .pay-card{contain:layout}
+  [data-paused],[data-paused] *,[data-paused] *:before,[data-paused] *:after{animation-play-state:paused !important}
+  #who,#product,#ecosystem,#how,.final{content-visibility:auto; contain-intrinsic-size:auto 640px}
   .amount{font-family:var(--mono); font-size:46px; line-height:1; margin-bottom:8px}
   .amount span{color:var(--clay)}
   .micro{color:#9da69d; font-size:12px; margin-bottom:26px}
@@ -535,8 +542,6 @@
         <path d="M0 62 C130 84 242 86 365 62 S594 18 762 36 S1032 70 1200 38"/>
         <path d="M0 52 C132 76 246 80 370 58 S598 18 764 30 S1034 62 1200 32"/>
         <path d="M0 42 C134 68 250 72 375 54 S602 20 766 26 S1036 54 1200 28"/>
-        <path d="M0 32 C136 58 254 64 380 50 S606 24 768 24 S1038 48 1200 28"/>
-        <path d="M0 22 C138 50 258 54 385 46 S610 30 770 26 S1040 44 1200 34"/>
       </svg>
     </div>
     <div class="pattern pattern-dots" aria-hidden="true"></div>
@@ -772,8 +777,6 @@
         <path d="M0 62 C130 84 242 86 365 62 S594 18 762 36 S1032 70 1200 38"/>
         <path d="M0 52 C132 76 246 80 370 58 S598 18 764 30 S1034 62 1200 32"/>
         <path d="M0 42 C134 68 250 72 375 54 S602 20 766 26 S1036 54 1200 28"/>
-        <path d="M0 32 C136 58 254 64 380 50 S606 24 768 24 S1038 48 1200 28"/>
-        <path d="M0 22 C138 50 258 54 385 46 S610 30 770 26 S1040 44 1200 34"/>
       </svg>
     </div>
     <div class="pattern-lines" aria-hidden="true"></div>
@@ -823,7 +826,7 @@
   function seedPatternDots(){
     document.querySelectorAll(".pattern-dots").forEach((field, fieldIndex) => {
       field.textContent = "";
-      const count = fieldIndex === 0 ? 28 : 42;
+      const count = fieldIndex === 0 ? 16 : 20;
 
       for(let i = 0; i < count; i += 1){
         const dot = document.createElement("span");
@@ -864,6 +867,8 @@
 
   let balanceUnits = 42873120;
   let pos = 0;
+  let cardVisible = true;
+  let rafId = 0;
 
   function frame(){
     pos = (pos + (reduced ? 0 : 3)) % (W + 60);
@@ -875,15 +880,38 @@
     waveDot.setAttribute("cx", W / 2);
     waveDot.setAttribute("cy", dotY);
 
-    if(!reduced) requestAnimationFrame(frame);
+    if(!reduced && cardVisible) rafId = requestAnimationFrame(frame);
+    else rafId = 0;
+  }
+
+  /* Single schedule helper: re-entry and tab-return can never double the loop. */
+  function startWaveLoop(){
+    if(!rafId && !reduced && cardVisible) rafId = requestAnimationFrame(frame);
   }
 
   function tick(){
+    if(!cardVisible) return;
     balanceUnits += 159;
     const dollars = (balanceUnits / 100000).toFixed(4);
     const parts = dollars.split(".");
     amount.innerHTML = "$" + parts[0] + "<span>." + parts[1] + "</span>";
   }
+
+  const decor = document.querySelectorAll(".pattern, .pay-card");
+  const io = new IntersectionObserver((entries) => {
+    for(const entry of entries){
+      entry.target.toggleAttribute("data-paused", !entry.isIntersecting);
+      if(entry.target.classList.contains("pay-card")){
+        cardVisible = entry.isIntersecting;
+        if(entry.isIntersecting) startWaveLoop();
+      }
+    }
+  }, { rootMargin: "80px 0px" });
+  decor.forEach((el) => io.observe(el));
+
+  document.addEventListener("visibilitychange", () => {
+    if(!document.hidden) startWaveLoop();
+  });
 
   frame();
   seedPatternDots();
