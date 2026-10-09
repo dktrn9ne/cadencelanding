@@ -4,18 +4,7 @@ import { collectAttribution, buildAppUrl } from '../funnel.js';
 
 const APP_URL = 'https://cadence-green-ten.vercel.app/';
 
-function memoryStorage() {
-  const map = new Map();
-  return {
-    getItem: (key) => (map.has(key) ? map.get(key) : null),
-    setItem: (key, value) => {
-      map.set(key, String(value));
-    },
-  };
-}
-
 test('collectAttribution picks campaign params and click ids, ignores everything else', () => {
-  delete globalThis.sessionStorage;
   const picked = collectAttribution(
     '?utm_source=newsletter&utm_medium=email&utm_campaign=pr3&utm_content=hero&gclid=abc123&foo=bar'
   );
@@ -28,40 +17,34 @@ test('collectAttribution picks campaign params and click ids, ignores everything
   });
 });
 
-test('collectAttribution persists to sessionStorage when available', () => {
-  const storage = memoryStorage();
-  globalThis.sessionStorage = storage;
-  collectAttribution('?utm_source=test&utm_campaign=pr3');
-  const stored = JSON.parse(storage.getItem('cadence:attribution'));
-  assert.deepEqual(stored, { utm_source: 'test', utm_campaign: 'pr3' });
-  delete globalThis.sessionStorage;
-});
-
 test('collectAttribution returns empty for a page without campaign params', () => {
-  const storage = memoryStorage();
-  globalThis.sessionStorage = storage;
-  const picked = collectAttribution('');
-  assert.deepEqual(picked, {});
-  assert.equal(storage.getItem('cadence:attribution'), null); // nothing stored
-  delete globalThis.sessionStorage;
+  assert.deepEqual(collectAttribution(''), {});
 });
 
-test('collectAttribution degrades to click-time params when storage throws', () => {
-  globalThis.sessionStorage = {
-    getItem: () => {
-      throw new Error('SecurityError');
-    },
+test('attribution is captured in memory only — no storage keys are written', () => {
+  // Privacy gate: the page gains zero storage keys. If anything ever tried to
+  // persist, this stub throws and the test fails.
+  let writeAttempted = false;
+  const throwingStorage = {
     setItem: () => {
-      throw new Error('SecurityError');
+      writeAttempted = true;
+      throw new Error('no storage allowed');
+    },
+    getItem: () => {
+      throw new Error('no storage allowed');
     },
   };
-  const picked = collectAttribution('?utm_source=test');
-  assert.deepEqual(picked, { utm_source: 'test' }); // capture still works
-  delete globalThis.sessionStorage;
+  globalThis.sessionStorage = throwingStorage;
+  try {
+    const picked = collectAttribution('?utm_source=test&utm_campaign=pr3');
+    assert.deepEqual(picked, { utm_source: 'test', utm_campaign: 'pr3' });
+    assert.equal(writeAttempted, false); // nothing tried to persist
+  } finally {
+    delete globalThis.sessionStorage;
+  }
 });
 
 test('buildAppUrl appends captured attribution onto the app URL', () => {
-  delete globalThis.sessionStorage;
   const url = buildAppUrl({ utm_source: 'test', utm_campaign: 'pr3', gclid: 'abc' });
   const parsed = new URL(url);
   assert.equal(parsed.origin + parsed.pathname, APP_URL);
@@ -70,26 +53,22 @@ test('buildAppUrl appends captured attribution onto the app URL', () => {
   assert.equal(parsed.searchParams.get('gclid'), 'abc');
 });
 
-test('buildAppUrl falls back to the visit’s stored attribution when nothing was captured', () => {
-  const storage = memoryStorage();
-  globalThis.sessionStorage = storage;
-  collectAttribution('?utm_source=newsletter&utm_campaign=launch');
-  const parsed = new URL(buildAppUrl({}));
+test('buildAppUrl appends the landing ref contract for a known placement', () => {
+  const parsed = new URL(buildAppUrl({}, 'landing-hero'));
+  assert.equal(parsed.searchParams.get('ref'), 'landing-hero');
+});
+
+test('buildAppUrl combines attribution and ref in one handoff URL', () => {
+  const parsed = new URL(buildAppUrl({ utm_source: 'newsletter' }, 'landing-nav'));
   assert.equal(parsed.searchParams.get('utm_source'), 'newsletter');
-  assert.equal(parsed.searchParams.get('utm_campaign'), 'launch');
-  delete globalThis.sessionStorage;
+  assert.equal(parsed.searchParams.get('ref'), 'landing-nav');
 });
 
-test('buildAppUrl hands off unchanged with no attribution anywhere', () => {
-  delete globalThis.sessionStorage; // nothing captured, nothing stored
+test('an explicit ref in attribution wins over the placement default', () => {
+  const parsed = new URL(buildAppUrl({ ref: 'landing-campaign-x' }, 'landing-nav'));
+  assert.equal(parsed.searchParams.get('ref'), 'landing-campaign-x');
+});
+
+test('buildAppUrl hands off unchanged with no attribution and no ref', () => {
   assert.equal(buildAppUrl({}), APP_URL);
-});
-
-test('captured attribution wins over whatever the visit stored earlier', () => {
-  const storage = memoryStorage();
-  globalThis.sessionStorage = storage;
-  collectAttribution('?utm_source=newsletter');
-  const parsed = new URL(buildAppUrl({ utm_source: 'direct' }));
-  assert.equal(parsed.searchParams.get('utm_source'), 'direct');
-  delete globalThis.sessionStorage;
 });

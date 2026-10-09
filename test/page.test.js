@@ -10,9 +10,9 @@ const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const dom = new JSDOM(html, { url: PAGE_URL });
 
 // Browser-like globals BEFORE importing funnel.js so its auto-init wires the page.
+// NOTE: no sessionStorage global — the measurement layer must not touch storage.
 global.window = dom.window;
 global.document = dom.window.document;
-global.sessionStorage = dom.window.sessionStorage;
 global.HTMLElement = dom.window.HTMLElement;
 
 // Mock fetch — the ONLY fetch in this environment. Nothing can reach the
@@ -115,34 +115,48 @@ test('the hero mock no longer presents synthetic data as live', () => {
 
 // --- Interaction contract -------------------------------------------------
 
-test('an app CTA click builds the handoff URL from campaign params and tracks app_handoff', () => {
+test('an app CTA click builds the handoff URL and tracks the locked schema events', () => {
   const heroCta = doc.querySelector('a[data-cta="hero-launch"]');
   heroCta.click();
 
   const events = dom.window.dataLayer;
-  const click = events.find((e) => e.event === 'cta_click' && e.cta_id === 'hero-launch');
+  const click = events.find((e) => e.event === 'cta_click');
   assert.ok(click, 'cta_click tracked');
-  assert.equal(click.destination, 'app');
+  assert.deepEqual(Object.keys(click).sort(), ['event', 'placement']);
+  assert.equal(click.placement, 'hero');
 
   const handoff = events.find((e) => e.event === 'app_handoff');
   assert.ok(handoff, 'app_handoff tracked after the URL was built');
-  assert.equal(handoff.attribution_present, true);
-  assert.equal(handoff.had_click_id, false);
+  assert.deepEqual(Object.keys(handoff).sort(), ['event', 'placement', 'ref']);
+  assert.equal(handoff.placement, 'hero');
+  assert.equal(handoff.ref, 'landing-hero');
 
   const handoffUrl = new URL(heroCta.href);
   assert.equal(handoffUrl.origin + handoffUrl.pathname, APP_URL);
   assert.equal(handoffUrl.searchParams.get('utm_source'), 'test');
   assert.equal(handoffUrl.searchParams.get('utm_campaign'), 'pr3');
+  assert.equal(handoffUrl.searchParams.get('ref'), 'landing-hero');
 });
 
-test('a form-route CTA click tracks cta_click with destination form', async () => {
+test('a form-route CTA click stays in-page and emits no CTA event (signup is measured via form_start)', async () => {
+  const before = dom.window.dataLayer.filter((e) => e.event === 'cta_click').length;
   doc.querySelector('a[data-cta="footer-access"]').click();
-  const click = dom.window.dataLayer.filter((e) => e.event === 'cta_click').pop();
-  assert.equal(click.cta_id, 'footer-access');
-  assert.equal(click.destination, 'form');
+  const after = dom.window.dataLayer.filter((e) => e.event === 'cta_click').length;
+  assert.equal(after, before, 'the footer request-access route is not a primary CTA');
   // jsdom performs the anchor's fragment navigation asynchronously — let it
   // settle inside this test so it cannot leak into the next one.
   await until(() => dom.window.location.hash === '#get-started', 'fragment navigation');
+});
+
+test('product links track product_view with a placement derived from structure', () => {
+  const before = dom.window.dataLayer.filter((e) => e.event === 'product_view').length;
+  doc.querySelector('.hero-text-link').click(); // "See how it works" → #what
+  const events = dom.window.dataLayer.filter((e) => e.event === 'product_view');
+  assert.equal(events.length, before + 1);
+  assert.deepEqual(Object.keys(events[events.length - 1]).sort(), ['event', 'placement']);
+  assert.equal(events[events.length - 1].placement, 'hero');
+  // jsdom fragment navigation settle.
+  return until(() => dom.window.location.hash === '#what', 'fragment navigation');
 });
 
 test('form lifecycle: validation, inline success without navigation, duplicate suppression, safe retry', async () => {
@@ -211,14 +225,30 @@ test('form lifecycle: validation, inline success without navigation, duplicate s
   assert.equal(fetchCalls.length, 2); // no double POST
 });
 
-test('the event contract holds: every event fired, zero PII anywhere', () => {
+test('the event contract holds: locked vocabulary, allowlisted keys, zero PII anywhere', () => {
   const events = dom.window.dataLayer;
+  const VOCAB = {
+    product_view: ['placement'],
+    cta_click: ['placement'],
+    app_handoff: ['placement', 'ref'],
+    form_start: ['form'],
+    form_success: ['form'],
+    form_failure: ['form', 'reason'],
+  };
+  for (const payload of events) {
+    assert.ok(VOCAB[payload.event], `unexpected event name: ${payload.event}`);
+    const keys = Object.keys(payload).filter((k) => k !== 'event').sort();
+    assert.deepEqual(keys, VOCAB[payload.event].slice().sort(), payload.event);
+  }
   const names = new Set(events.map((e) => e.event));
-  for (const name of ['cta_click', 'app_handoff', 'form_submit', 'form_success', 'form_error']) {
+  for (const name of ['product_view', 'cta_click', 'app_handoff', 'form_failure', 'form_success']) {
     assert.ok(names.has(name), 'missing event: ' + name);
   }
   const serialized = JSON.stringify(events).toLowerCase();
   assert.equal(serialized.includes('maurice@thecompany.io'), false);
   assert.equal(serialized.includes('retry@thecompany.io'), false);
   assert.equal(serialized.includes('@'), false);
+  // The page adds zero storage keys — nothing was ever written this session.
+  assert.equal(dom.window.sessionStorage.length, 0, 'sessionStorage untouched');
+  assert.equal(dom.window.localStorage.length, 0, 'localStorage untouched');
 });
