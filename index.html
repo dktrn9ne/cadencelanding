@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadence on XRP | Real-time payroll</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<!-- Measurement (PR 8): cookieless, event-level analytics via Umami Cloud.
+     No-ops until the site is created and this placeholder is uncommented with
+     the real site ID — see docs/monitoring.md (post-merge checklist). Until
+     then the page loads zero analytics and emits zero analytics calls.
+<script async defer src="https://cloud.umami.is/script.js" data-website-id="REPLACE_WITH_UMAMI_SITE_ID"></script>
+<script>window.CADENCE_ANALYTICS_ID = 'REPLACE_WITH_UMAMI_SITE_ID';</script>
+-->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <style>
@@ -448,11 +455,11 @@
     </a>
     <nav class="nav-links" aria-label="Primary navigation">
       <a href="#who">Who it's for</a>
-      <a href="#product">Product</a>
+      <a href="#product" data-event="product_view" data-placement="nav">Product</a>
       <a href="#ecosystem">Ecosystem</a>
       <a href="#how">How it works</a>
     </nav>
-    <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Set up your wallet</a>
+    <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/?ref=landing-nav" data-event="cta_click" data-placement="nav">Set up your wallet</a>
   </div>
 </header>
 
@@ -475,8 +482,8 @@
         <h1>Payroll<br>with a <em>pulse.</em></h1>
         <p class="hero-copy">Cadence streams income in small, steady payments instead of holding work behind a two-week wait. Built on XRP, designed for humans, and shaped for the people who actually earn the money.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Start streaming pay</a>
-          <a class="btn btn-secondary" href="#product">View the product</a>
+          <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/?ref=landing-hero" data-event="cta_click" data-placement="hero">Start streaming pay</a>
+          <a class="btn btn-secondary" href="#product" data-event="product_view" data-placement="hero">View the product</a>
         </div>
         <p class="hero-footnote">No custodial account. Payments are signed from a wallet the worker controls and every stream becomes portable proof of income.</p>
       </div>
@@ -710,7 +717,7 @@
       <div class="kicker">Move money at the speed of work</div>
       <h2>Your income. Your cadence.<br><em>Real ownership, built on XRP.</em></h2>
       <p>Start with real-time payroll today. The rest of the Cadence ecosystem will arrive as the product grows.</p>
-      <form class="form" action="https://formspree.io/f/mojgkzay" method="POST">
+      <form class="form" action="https://formspree.io/f/mojgkzay" method="POST" data-form="signup">
         <input type="email" name="email" placeholder="you@company.com" required>
         <button class="btn btn-primary" type="submit">Get started</button>
       </form>
@@ -734,7 +741,7 @@
       </span>
     </div>
     <div class="foot-links">
-      <a href="#product">Product</a>
+      <a href="#product" data-event="product_view" data-placement="footer">Product</a>
       <a href="#ecosystem">Ecosystem</a>
       <a href="#get-started">Get started</a>
     </div>
@@ -817,6 +824,61 @@
   frame();
   seedPatternDots();
   setInterval(tick, reduced ? 4000 : 220);
+</script>
+<script>
+  /* Measurement layer (PR 8) — structural, copy-independent events with
+     enum-only properties. Privacy gates, enforced by tests/analytics.spec.js:
+     no field values, no wallet- or email-shaped strings, no raw error text,
+     no cookies, no localStorage/sessionStorage keys, no persistent IDs.
+     No-ops entirely until the Umami site is configured (docs/monitoring.md). */
+  (function () {
+    var FORM_ID = 'signup';
+    var PLACEMENTS = ['nav', 'hero', 'footer'];
+
+    function track(name, props) {
+      if (!window.CADENCE_ANALYTICS_ID || !window.umami) return;
+      try {
+        window.umami.track(name, props || {});
+      } catch (err) {
+        /* Telemetry must never break the journey it measures, and a vendor
+           throw has no page-side observer to report to. */
+      }
+    }
+
+    function placementOf(el) {
+      var p = el.getAttribute('data-placement');
+      return PLACEMENTS.indexOf(p) !== -1 ? p : 'unknown';
+    }
+
+    // One delegated listener covers every current and future [data-event] hook.
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest && e.target.closest('[data-event]');
+      if (!el) return;
+      var placement = placementOf(el);
+      track(el.getAttribute('data-event'), { placement: placement });
+      if (el.origin && el.origin !== location.origin) {
+        var ref = 'landing-' + placement;
+        try {
+          var fromHref = new URL(el.href).searchParams.get('ref');
+          if (fromHref) ref = fromHref;
+        } catch (err) {
+          /* An anchor's href is always absolute-parsable; the placement-derived
+             fallback above is the spec'd value, so nothing is lost here. */
+        }
+        track('app_handoff', { placement: placement, ref: ref });
+      }
+    });
+
+    // form_start binds to focus — never input — so field values cannot leak.
+    var form = document.querySelector('form[data-form="' + FORM_ID + '"]');
+    if (!form) return;
+    var email = form.querySelector('input[name="email"]');
+    if (email) {
+      email.addEventListener('focus', function () {
+        track('form_start', { form: FORM_ID });
+      }, { once: true });
+    }
+  })();
 </script>
 </body>
 </html>
