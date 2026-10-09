@@ -103,7 +103,7 @@
     align-items:center;
     justify-content:center;
     gap:8px;
-    min-height:42px;
+    min-height:44px;
     padding:0 18px;
     border-radius:8px;
     border:1px solid transparent;
@@ -141,7 +141,12 @@
   .brand-word{font-family:var(--display); font-size:21px; font-weight:700; line-height:1}
   .brand-xrp{font-family:var(--mono); font-size:9px; letter-spacing:.35em; color:var(--clay); margin-top:2px}
   .nav-links{display:flex; align-items:center; gap:28px; color:#59584f; font-size:13px; font-weight:600}
+  .nav-links a{display:inline-flex; align-items:center; min-height:44px}
   .nav-links a:hover{color:var(--forest)}
+  .nav .btn{white-space:nowrap}
+  .cta-label-short{display:none}
+  .nav-toggle{display:none}
+  .nav-menu{display:none}
 
   .hero{position:relative; overflow:hidden; padding:76px 0 26px}
   .hero:before{
@@ -409,14 +414,62 @@
   .final h2 em{color:var(--clay); font-style:italic}
   .final p{color:#b9bfb4; line-height:1.7; max-width:560px}
   .form{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
-  .form input{min-height:42px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
+  .form input{min-height:44px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
   .form input::placeholder{color:#858c84}
   footer{padding:34px 0; border-top:1px solid var(--line)}
   .foot{display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap}
   .foot-links{display:flex; gap:22px; color:#68645a; font-size:13px}
+  .foot-links a{display:inline-flex; align-items:center; min-height:44px}
 
+  @keyframes menu-in{
+    from{opacity:0; transform:translateY(-8px)}
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .nav-menu{animation:menu-in .18s ease}
+  }
   @media(max-width:920px){
     .nav-links{display:none}
+    .nav-toggle{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:44px;
+      height:44px;
+      flex:0 0 auto;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:rgba(255,249,236,.6);
+      color:var(--forest);
+      cursor:pointer;
+    }
+    .nav-toggle:hover{border-color:var(--forest)}
+    .nav-toggle-icon{width:22px; height:22px}
+    .nav-toggle .icon-close{display:none}
+    .nav-toggle[aria-expanded="true"] .icon-open{display:none}
+    .nav-toggle[aria-expanded="true"] .icon-close{display:block}
+    .nav-menu{
+      display:block;
+      position:absolute;
+      top:100%;
+      left:0;
+      right:0;
+      background:var(--cream);
+      border-bottom:1px solid rgba(228,216,193,.82);
+      box-shadow:0 22px 38px rgba(31,45,36,.16);
+    }
+    .nav-menu[hidden]{display:none}
+    .nav-menu a{
+      display:flex;
+      align-items:center;
+      min-height:48px;
+      padding:10px 20px;
+      font-size:15px;
+      font-weight:600;
+      color:#59584f;
+      border-top:1px solid rgba(228,216,193,.55);
+    }
+    .nav-menu a:first-child{border-top:0}
+    .nav-menu a:hover{color:var(--forest); background:rgba(255,249,236,.7)}
     .hero-grid,.audience-grid,.mark-grid{grid-template-columns:1fr}
     .mark-grid{gap:28px}
     .metrics-grid,.capability-grid{grid-template-columns:1fr 1fr}
@@ -432,7 +485,6 @@
   @media(max-width:600px){
     .wrap{width:min(100% - 28px, 1180px)}
     .nav-inner{height:66px}
-    .nav .btn{display:none}
     .hero{padding-top:54px}
     .hero-grid{gap:34px}
     .pay-card{padding:20px}
@@ -443,10 +495,25 @@
     section{padding:64px 0}
     .big-c svg{width:144px; height:144px}
     .foot-links{width:100%; justify-content:space-between}
+    .form{flex-direction:column; align-items:stretch}
+    .form input{min-width:0; flex:0 0 auto}
+    .form .btn{width:100%}
     .pattern-lines{display:none}
     .pattern-wave{left:-42vw; width:184vw; opacity:.18}
     .pattern-dots{opacity:.28}
     #roadmap .pattern-rings{width:126px; height:126px; right:-74px; top:190px; opacity:.5}
+  }
+  @media(max-width:480px){
+    .cta-label-full{display:none}
+    .cta-label-short{display:inline}
+    .brand-xrp{display:none}
+    .nav-inner{gap:12px}
+    .brand{gap:8px}
+    .brand-word{font-size:18px}
+    .nav .btn{padding:0 12px; flex:0 0 auto}
+  }
+  @media(max-width:360px){
+    .nav .brand > span:last-child{display:none}
   }
 </style>
 </head>
@@ -472,7 +539,26 @@
       <a href="#capabilities">Available today</a>
       <a href="#how">How it works</a>
     </nav>
-    <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Start streaming pay</a>
+    <a class="btn btn-primary nav-cta" href="https://cadence-green-ten.vercel.app/">
+      <span class="cta-label-full">Start streaming pay</span>
+      <span class="cta-label-short">Start streaming</span>
+    </a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
+      <svg class="nav-toggle-icon icon-open" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <svg class="nav-toggle-icon icon-close" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+        <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="nav-menu" id="mobile-menu" hidden>
+    <nav aria-label="Mobile navigation">
+      <a href="#what">What is Cadence</a>
+      <a href="#who">Who it's for</a>
+      <a href="#capabilities">Available today</a>
+      <a href="#how">How it works</a>
+    </nav>
   </div>
 </header>
 
@@ -820,6 +906,55 @@
   frame();
   seedPatternDots();
   setInterval(tick, reduced ? 4000 : 220);
+
+  const navToggle = document.querySelector(".nav-toggle");
+  const navMenu = document.getElementById("mobile-menu");
+
+  function setMenu(open){
+    navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    navMenu.hidden = !open;
+
+    if(open){
+      navMenu.querySelector("a").focus({preventScroll:true});
+    }else{
+      navToggle.focus({preventScroll:true});
+    }
+  }
+
+  navToggle.addEventListener("click", () => setMenu(navMenu.hidden));
+
+  navMenu.addEventListener("click", (e) => {
+    if(e.target.closest("a")) setMenu(false);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if(navMenu.hidden) return;
+
+    if(e.key === "Escape"){
+      setMenu(false);
+      return;
+    }
+
+    if(e.key === "Tab"){
+      const items = [navToggle, ...navMenu.querySelectorAll("a")];
+      const at = items.indexOf(document.activeElement);
+      const next = e.shiftKey
+        ? (at <= 0 ? items.length - 1 : at - 1)
+        : (at === -1 || at === items.length - 1 ? 0 : at + 1);
+
+      items[next].focus({preventScroll:true});
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if(!navMenu.hidden && !e.target.closest(".nav")) setMenu(false);
+  });
+
+  window.matchMedia("(max-width: 920px)").addEventListener("change", (e) => {
+    if(!e.matches && !navMenu.hidden) setMenu(false);
+  });
 </script>
 </body>
 </html>
