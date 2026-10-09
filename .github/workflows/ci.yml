@@ -17,6 +17,17 @@ permissions:
   contents: read
 
 jobs:
+  unit:
+    name: Unit (node --test)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+
   links:
     name: Broken links and anchors (lychee)
     runs-on: ubuntu-latest
@@ -76,7 +87,7 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm test
+      - run: npm run test:e2e
 
   lighthouse:
     name: Budgets (Lighthouse CI)
@@ -88,11 +99,11 @@ jobs:
           node-version: 20
       - run: npm ci
       - name: Run Lighthouse CI
-        run: npx lhci autorun
+        run: npm run test:lhci
         env:
           # LHCI drives its own Chrome; GitHub runners ship Google Chrome.
           CHROME_PATH: /usr/bin/google-chrome
-      # The SEO budget is error severity in lighthouserc.js (staged-severity
+      # The SEO budget is error severity in lighthouserc.cjs (staged-severity
       # flip satisfied by the SEO/social package landing on main).
 
   metadata:

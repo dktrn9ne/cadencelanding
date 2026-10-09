@@ -2,18 +2,20 @@
   "name": "cadencelanding",
   "version": "1.0.0",
   "private": true,
-  "description": "Cadence landing page - measurement and release guardrails (PR 8)",
+  "description": "Cadence landing page — static site with funnel behaviors (campaign attribution, request-access form, measurement events) and PR 8 release guardrails",
+  "type": "module",
   "scripts": {
+    "test": "node --test test/",
     "serve": "serve . -l 4173",
-    "test": "playwright test",
     "test:e2e": "playwright test",
     "test:a11y": "pa11y-ci --config .pa11yci.json",
-    "test:lhci": "lhci autorun",
+    "test:lhci": "lhci autorun --config=./lighthouserc.cjs",
     "test:metadata": "node scripts/check-metadata.mjs"
   },
   "devDependencies": {
     "@lhci/cli": "^0.15.1",
     "@playwright/test": "^1.64.0",
+    "jsdom": "^29.1.1",
     "pa11y-ci": "^5.0.0",
     "serve": "^14.2.6"
   }

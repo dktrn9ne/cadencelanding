@@ -56,7 +56,7 @@ test.describe('analytics payload contract', () => {
     await blockAppNavigation(page);
 
     await page.goto('/');
-    await page.click('a[data-event="cta_click"][data-placement="nav"]');
+    await page.click('header.nav a[data-cta="nav-launch"]');
     await page.waitForTimeout(200);
 
     const events = await page.evaluate(() => window.__events);
@@ -71,7 +71,7 @@ test.describe('analytics payload contract', () => {
     await blockAppNavigation(page);
 
     await page.goto('/');
-    await page.click('a[data-event="cta_click"][data-placement="hero"]');
+    await page.click('.hero-actions a[data-cta="hero-launch"]');
     await page.waitForTimeout(200);
 
     const events = await page.evaluate(() => window.__events);
@@ -84,13 +84,14 @@ test.describe('analytics payload contract', () => {
     await installCollector(page);
     await page.goto('/');
 
-    await page.click('a[data-event="product_view"][data-placement="nav"]');
+    await page.click('.nav-links a[href="#what"]');
     await page.waitForTimeout(200);
     let events = await page.evaluate(() => window.__events);
     expect(events.map(e => e.name)).toEqual(['product_view']);
+    expect(events[0].props).toEqual({ placement: 'nav' });
     assertPayloadShape(events);
 
-    await page.click('a[data-event="product_view"][data-placement="footer"]');
+    await page.click('footer a[href="#capabilities"]');
     await page.waitForTimeout(200);
     events = await page.evaluate(() => window.__events);
     expect(events.map(e => e.name)).toEqual(['product_view', 'product_view']);
@@ -102,7 +103,7 @@ test.describe('analytics payload contract', () => {
     await installCollector(page);
     await page.goto('/');
 
-    const email = page.locator('#signup-email');
+    const email = page.locator('#access-email');
     await email.click();
     await page.waitForTimeout(100);
     // Typing must not re-emit or leak the value.
@@ -121,8 +122,8 @@ test.describe('analytics payload contract', () => {
   test('unconfigured analytics (no CADENCE_ANALYTICS_ID) emits nothing and page adds no cookies or storage keys', async ({ page }) => {
     await blockAppNavigation(page); // never leave the page
     await page.goto('/');
-    await page.click('a[data-event="cta_click"][data-placement="nav"]');
-    await page.click('a[data-event="product_view"][data-placement="nav"]');
+    await page.click('header.nav a[data-cta="nav-launch"]');
+    await page.click('.nav-links a[href="#what"]');
     await page.waitForTimeout(200);
 
     const state = await page.evaluate(() => ({

@@ -1,6 +1,6 @@
 // Journey spec (PR 8): navigation anchors (smooth-scroll aware), the external
 // app handoff (asserted via route interception — never a real cross-origin
-// navigation), and the mobile-menu hook contract.
+// navigation), and the mobile menu journey.
 
 import { test, expect } from '@playwright/test';
 import { APP_URL, preventAppNavigationInit } from './helpers.js';
@@ -39,7 +39,7 @@ async function expectSectionVisible(page, sectionId) {
 test.describe('navigation journeys', () => {
   test('nav anchors scroll to their sections', async ({ page }) => {
     await page.goto('/');
-    for (const id of ['who', 'product', 'ecosystem', 'how']) {
+    for (const id of ['what', 'who', 'capabilities', 'how']) {
       await page.click(`.nav-links a[href="#${id}"]`);
       await waitForScrollSettle(page);
       await expectSectionVisible(page, id);
@@ -48,7 +48,7 @@ test.describe('navigation journeys', () => {
 
   test('footer anchors scroll to their sections', async ({ page }) => {
     await page.goto('/');
-    for (const id of ['product', 'ecosystem', 'get-started']) {
+    for (const id of ['capabilities', 'roadmap', 'get-started']) {
       await page.click(`.foot-links a[href="#${id}"]`);
       await waitForScrollSettle(page);
       const box = await page.locator(`#${id}`).boundingBox();
@@ -58,7 +58,9 @@ test.describe('navigation journeys', () => {
 
   test('app handoff request carries the app origin and ref param (network-intercepted, never a real cross-origin hit)', async ({ page }) => {
     let appRequest = null;
-    await page.route(APP_URL + '**', route => {
+    // The CTA opens a new tab (target=_blank); page.route would miss the
+    // popup's navigation, so intercept at the context level.
+    await page.context().route(APP_URL + '**', route => {
       appRequest = route.request();
       // Intercept at the network layer; a real body so the intercepted
       // "navigation" completes instead of hanging the click wait.
@@ -66,7 +68,7 @@ test.describe('navigation journeys', () => {
     });
 
     await page.goto('/');
-    await page.click('a[data-event="cta_click"][data-placement="nav"]');
+    await page.click('header.nav a[data-cta="nav-launch"]');
     await page.waitForTimeout(300);
 
     expect(appRequest, 'app request should be intercepted').not.toBeNull();
@@ -77,10 +79,10 @@ test.describe('navigation journeys', () => {
 
   test('cta click never leaves the landing page when the handoff is blocked', async ({ page }) => {
     await preventAppNavigationInit(page);
-    await page.route(APP_URL + '**', route => route.abort());
+    await page.context().route(APP_URL + '**', route => route.abort());
 
     await page.goto('/');
-    await page.click('a[data-event="cta_click"][data-placement="hero"]');
+    await page.click('.hero-actions a[data-cta="hero-launch"]');
     await page.waitForTimeout(300);
 
     // The visitor stays on the landing page — the handoff is a hard exit,
@@ -88,18 +90,27 @@ test.describe('navigation journeys', () => {
     expect(page.url()).toMatch(/localhost:4173/);
   });
 
-  test('mobile menu targets the data-menu-toggle hook contract', async ({ page }) => {
-    // Contract test for PR 2's mobile menu: until PR 2 lands there is no
-    // [data-menu-toggle] element — this test skips with a warning instead of
-    // failing, and hardens automatically once the hook exists.
+  test('mobile menu opens, moves focus, and closes on Escape', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 720 });
     await page.goto('/');
-    const toggle = await page.locator('[data-menu-toggle]').count();
-    if (toggle === 0) {
-      test.skip(true, 'data-menu-toggle hook not present yet — lands with PR 2 (mobile menu)');
-      return;
-    }
-    await page.click('[data-menu-toggle]');
-    await expect(page.locator('.nav-links')).toBeVisible();
+
+    const toggle = page.locator('.nav-toggle');
+    const menu = page.locator('#mobile-menu');
+    await expect(menu).toBeHidden();
+
+    await toggle.click();
+    await expect(menu).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    // Focus moves into the menu (first link) for keyboard users.
+    await expect(page.locator('#mobile-menu a').first()).toBeFocused();
+
+    await page.keyboard.press('Escape');
+    await expect(menu).toBeHidden();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+
+    // Reopen, then a menu link navigates in-page and closes the menu.
+    await toggle.click();
+    await page.click('#mobile-menu a[href="#what"]');
+    await expect(menu).toBeHidden();
   });
 });
