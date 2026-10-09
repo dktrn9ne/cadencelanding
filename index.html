@@ -59,10 +59,30 @@
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/playfair-display-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+  /* Self-hosted latin subsets (fonts/, OFL licenses alongside) built with pyftsubset:
+     printable Basic Latin + punctuation + currency. Only the used weights ship
+     (Inter 400/600/700/800, IBM Plex Mono 400/600, Playfair Display 700) — the
+     Google Fonts CSS chain is gone, so the page makes zero third-party requests. */
+  @font-face{font-family:"Playfair Display";src:url("fonts/playfair-display-latin-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+  @font-face{font-family:"Inter";src:url("fonts/inter-latin-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+  @font-face{font-family:"Inter";src:url("fonts/inter-latin-600.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+  @font-face{font-family:"Inter";src:url("fonts/inter-latin-700.woff2") format("woff2");font-weight:700;font-style:normal;font-display:swap}
+  @font-face{font-family:"Inter";src:url("fonts/inter-latin-800.woff2") format("woff2");font-weight:800;font-style:normal;font-display:swap}
+  @font-face{font-family:"IBM Plex Mono";src:url("fonts/ibm-plex-mono-latin-400.woff2") format("woff2");font-weight:400;font-style:normal;font-display:swap}
+  @font-face{font-family:"IBM Plex Mono";src:url("fonts/ibm-plex-mono-latin-600.woff2") format("woff2");font-weight:600;font-style:normal;font-display:swap}
+  /* Metric-matched fallbacks: a late swap or a 404 holds the layout instead of
+     reflowing it. Overrides are derived from the metrics of the binaries in fonts/
+     and metric-compatible local clones (Arimo approximates Arial, Gelasio approximates
+     Georgia); the mono alt-face assumes Menlo/DejaVu Sans Mono at 0.602em advance
+     (Consolas at 0.55em gets its own face). line-gap is zeroed so the line box
+     comes from ascent+descent alone. */
+  @font-face{font-family:"Inter Fallback";src:local("Arial"),local("Arimo"),local("Liberation Sans");size-adjust:104.71%;ascent-override:92.52%;descent-override:23.04%;line-gap-override:0%}
+  @font-face{font-family:"Playfair Fallback";src:local("Georgia"),local("Gelasio");size-adjust:101.1%;ascent-override:107.02%;descent-override:24.83%;line-gap-override:0%}
+  @font-face{font-family:"Plex Mono Fallback";src:local("Consolas");size-adjust:109.13%;ascent-override:93.92%;descent-override:25.2%;line-gap-override:0%}
+  @font-face{font-family:"Plex Mono Fallback Alt";src:local("Menlo"),local("DejaVu Sans Mono");size-adjust:99.66%;ascent-override:102.85%;descent-override:27.59%;line-gap-override:0%}
   :root{
     --forest:#1F2D24;
     --forest-2:#162119;
@@ -75,9 +95,9 @@
     --paper:#FFF9EC;
     --line:#E4D8C1;
     --line-dark:#35463A;
-    --display:"Playfair Display", Georgia, serif;
-    --body:"Inter", Arial, sans-serif;
-    --mono:"IBM Plex Mono", Consolas, monospace;
+    --display:"Playfair Display","Playfair Fallback",Georgia,serif;
+    --body:"Inter","Inter Fallback",Arial,sans-serif;
+    --mono:"IBM Plex Mono","Plex Mono Fallback","Plex Mono Fallback Alt",Consolas,monospace;
   }
 
   *{box-sizing:border-box}
