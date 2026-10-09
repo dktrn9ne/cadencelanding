@@ -147,6 +147,8 @@
   .cta-label-short{display:none}
   .nav-toggle{display:none}
   .nav-menu{display:none}
+  .nav-cta{display:flex; flex-direction:column; align-items:flex-end; gap:3px}
+  .nav-cta .cta-disclosure{font-size:9.5px; color:#68645a; white-space:nowrap}
 
   .hero{position:relative; overflow:hidden; padding:76px 0 26px}
   .hero:before{
@@ -280,6 +282,8 @@
   .hero-actions{display:flex; flex-wrap:wrap; gap:12px; margin-bottom:20px}
   .hero-text-link{align-self:center; color:#555348; font-size:13px; font-weight:600; text-decoration:underline; text-underline-offset:5px; text-decoration-color:rgba(214,90,58,.55)}
   .hero-text-link:hover{color:var(--forest)}
+  .cta-disclosure{margin:0; color:#706d62; font-size:12px; line-height:1.55}
+  .hero .cta-disclosure{margin:-6px 0 16px; max-width:560px}
   .hero-footnote{max-width:560px; color:#706d62; font-size:12.5px; line-height:1.6}
 
   .pay-card{
@@ -308,10 +312,12 @@
   .pay-label{font-family:var(--mono); color:#9da69d; font-size:10px; letter-spacing:.14em; text-transform:uppercase}
   .live{display:flex; align-items:center; gap:7px; color:var(--sun); font-family:var(--mono); font-size:10px; letter-spacing:.12em}
   .live:before{content:""; width:6px; height:6px; border-radius:50%; background:var(--clay); animation:pulse 1.3s infinite}
+  .live.demo:before{background:var(--sun); animation:none}
   @keyframes pulse{50%{opacity:.35}}
   .amount{font-family:var(--mono); font-size:46px; line-height:1; margin-bottom:8px}
   .amount span{color:var(--clay)}
-  .micro{color:#9da69d; font-size:12px; margin-bottom:26px}
+  .micro{color:#9da69d; font-size:12px; margin-bottom:6px}
+  .demo-caption{position:relative; z-index:1; margin:0 0 26px; color:#8f9890; font-size:11px; font-style:italic}
   .wave{height:70px; margin-bottom:24px}
   .wave svg{width:100%; height:100%; overflow:visible}
   .wave path{fill:none; stroke:var(--clay); stroke-width:2}
@@ -413,9 +419,25 @@
   .final .wrap{position:relative; z-index:1}
   .final h2 em{color:var(--clay); font-style:italic}
   .final p{color:#b9bfb4; line-height:1.7; max-width:560px}
-  .form{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
-  .form input{min-height:44px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
+  .form{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-top:24px}
+  .form input{width:100%; min-height:42px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
   .form input::placeholder{color:#858c84}
+  .form-field{display:flex; flex-direction:column; gap:6px; flex:0 1 340px; min-width:240px}
+  .form-field label{font-size:12px; font-weight:600; color:#d8d2c2; letter-spacing:.02em}
+  .form input.is-invalid{border-color:var(--clay)}
+  .form-status{flex-basis:100%; margin:0; font-size:13px; line-height:1.5; color:#e7dfc9}
+  .form-status.is-error{color:#f2a48c}
+  .form-status.is-success{color:#bfd9c4}
+  .form-note{flex-basis:100%; margin:0; font-size:11.5px; color:#8f9890}
+  .form-success{flex-basis:100%; display:flex; flex-direction:column; gap:6px; margin:0; padding:14px 16px; border:1px solid var(--line-dark); border-radius:8px; background:rgba(22,33,25,.5)}
+  .form-success[hidden]{display:none}
+  .form-success strong{font-size:14px; color:#e8f0e4}
+  .form-success span{font-size:12.5px; color:#9da69d}
+  .form-reset{align-self:flex-start; padding:0; border:0; background:none; color:var(--sun); font-size:12px; cursor:pointer; text-decoration:underline}
+  .form.is-success .form-field,
+  .form.is-success #access-submit,
+  .form.is-success .form-note,
+  .form.is-success .form-status{display:none}
   footer{padding:34px 0; border-top:1px solid var(--line)}
   .foot{display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap}
   .foot-links{display:flex; gap:22px; color:#68645a; font-size:13px}
@@ -539,10 +561,10 @@
       <a href="#capabilities">Available today</a>
       <a href="#how">How it works</a>
     </nav>
-    <a class="btn btn-primary nav-cta" href="https://cadence-green-ten.vercel.app/">
-      <span class="cta-label-full">Start streaming pay</span>
-      <span class="cta-label-short">Start streaming</span>
-    </a>
+    <div class="nav-cta">
+      <a class="btn btn-primary" data-cta="nav-launch" href="https://cadence-green-ten.vercel.app/" target="_blank" rel="noopener noreferrer" aria-describedby="nav-disclosure">Launch Cadence</a>
+      <span class="cta-disclosure" id="nav-disclosure">XRPL mainnet — real RLUSD</span>
+    </div>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">
       <svg class="nav-toggle-icon icon-open" aria-hidden="true" viewBox="0 0 24 24" fill="none">
         <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -581,19 +603,21 @@
         <h1>Pay contractors the moment work happens.</h1>
         <p class="hero-copy">Cadence turns payroll into scheduled RLUSD payments on the XRP Ledger. Set a pay rhythm for each person on your team; Cadence divides the weekly total into small RLUSD payments that settle wallet to wallet in 3–5 seconds — no pay cycle holding anyone's money back.</p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Start streaming pay</a>
+          <a class="btn btn-primary" data-cta="hero-launch" href="https://cadence-green-ten.vercel.app/" target="_blank" rel="noopener noreferrer" aria-describedby="hero-disclosure">Launch Cadence</a>
           <a class="hero-text-link" href="#what">See how it works</a>
         </div>
+        <p class="cta-disclosure" id="hero-disclosure">Launches the live app on XRPL mainnet — real RLUSD, real transactions.</p>
         <p class="hero-footnote">Non-custodial: payments are signed from wallets you and your workers control, and every payment lands on-chain as portable proof of income.</p>
       </div>
 
-      <aside class="pay-card" aria-label="Live streaming payment preview">
+      <aside class="pay-card" aria-label="Demo streaming payment preview">
         <div class="pay-head">
           <div class="pay-label">Streaming to Maurice T.</div>
-          <div class="live">Live</div>
+          <div class="live demo">Demo</div>
         </div>
         <div class="amount" id="amount">$428<span>.7312</span></div>
         <div class="micro">$0.0159 every 15 seconds | $640.00 this week</div>
+        <p class="demo-caption">Illustrative figures — demo data, not live balances.</p>
         <div class="wave">
           <svg viewBox="0 0 400 64" preserveAspectRatio="none" aria-hidden="true">
             <path class="base" d="M0,32 L400,32"/>
@@ -799,9 +823,19 @@
       <div class="kicker">Move money at the speed of work</div>
       <h2>Payroll without the pay cycle.<br><em>Real ownership, built on the XRP Ledger.</em></h2>
       <p>Start with one contractor or your whole distributed team. Set each person's rhythm, fund the stream, and every RLUSD payment settles wallet to wallet in seconds — on-chain, as portable proof of income.</p>
-      <form class="form" action="https://formspree.io/f/mojgkzay" method="POST">
-        <input type="email" name="email" placeholder="you@company.com" required>
-        <button class="btn btn-primary" type="submit">Get started</button>
+      <form class="form" id="access-form" action="https://formspree.io/f/mojgkzay" method="POST">
+        <div class="form-field">
+          <label for="access-email">Email address</label>
+          <input type="email" id="access-email" name="email" placeholder="you@company.com" required autocomplete="email">
+        </div>
+        <button class="btn btn-secondary" id="access-submit" type="submit">Request access</button>
+        <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        <div class="form-success" id="form-success" hidden>
+          <strong>You're in — we'll reach out soon.</strong>
+          <span>Watch your inbox for early access details.</span>
+          <button type="button" class="form-reset" id="form-reset">Use a different email</button>
+        </div>
+        <p class="form-note" id="form-privacy-note">We only use your email to reply about early access — no marketing, no sharing.</p>
       </form>
     </div>
   </section>
@@ -825,7 +859,7 @@
     <div class="foot-links">
       <a href="#capabilities">Available today</a>
       <a href="#roadmap">Roadmap</a>
-      <a href="#get-started">Get started</a>
+      <a href="#get-started" data-cta="footer-access">Request access</a>
     </div>
   </div>
 </footer>
@@ -956,5 +990,6 @@
     if(!e.matches && !navMenu.hidden) setMenu(false);
   });
 </script>
+<script type="module" src="funnel.js"></script>
 </body>
 </html>
