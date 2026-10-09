@@ -44,6 +44,7 @@
       var(--cream);
     background-size:72px 72px;
     -webkit-font-smoothing:antialiased;
+    overflow-x:clip;
   }
   a{color:inherit;text-decoration:none}
   button,input{font:inherit}
@@ -398,6 +399,17 @@
   .form{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
   .form input{min-height:42px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
   .form input::placeholder{color:#858c84}
+  .form-label{width:100%; font-size:13px; font-weight:600; color:#b9bfb4}
+  .form-status{display:none; width:100%; margin:0; font-size:13px; line-height:1.5}
+  .form-status.error{color:#f2a48d}
+  .form-status.success{color:var(--sun)}
+  .form[data-form-state="submitting"] button[type="submit"]{opacity:.65; pointer-events:none}
+  .form[data-form-state="success"] .form-label,
+  .form[data-form-state="success"] input,
+  .form[data-form-state="success"] button,
+  .form[data-form-state="success"] .form-status.error{display:none}
+  .form[data-form-state="success"] .form-status.success{display:block}
+  .form[data-form-state="error"] .form-status.error{display:block}
   footer{padding:34px 0; border-top:1px solid var(--line)}
   .foot{display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap}
   .foot-links{display:flex; gap:22px; color:#68645a; font-size:13px}
@@ -717,9 +729,12 @@
       <div class="kicker">Move money at the speed of work</div>
       <h2>Your income. Your cadence.<br><em>Real ownership, built on XRP.</em></h2>
       <p>Start with real-time payroll today. The rest of the Cadence ecosystem will arrive as the product grows.</p>
-      <form class="form" action="https://formspree.io/f/mojgkzay" method="POST" data-form="signup">
-        <input type="email" name="email" placeholder="you@company.com" required>
+      <form class="form" action="https://formspree.io/f/mojgkzay" method="POST" data-form="signup" data-form-state="idle">
+        <label class="form-label" for="signup-email">Your work email</label>
+        <input id="signup-email" type="email" name="email" placeholder="you@company.com" autocomplete="email" required>
         <button class="btn btn-primary" type="submit">Get started</button>
+        <p class="form-status error" role="alert">Something went wrong — try again.</p>
+        <p class="form-status success" role="status">Thanks — you're in. We'll be in touch at your cadence.</p>
       </form>
     </div>
   </section>
@@ -878,6 +893,61 @@
         track('form_start', { form: FORM_ID });
       }, { once: true });
     }
+
+    // The form upgrades from a native POST (which abandons the page for
+    // Formspree's default pages) to fetch() with inline states. Native
+    // action/method stay, so visitors without JS keep today's behavior.
+    function setFormState(state) {
+      form.setAttribute('data-form-state', state);
+      var btn = form.querySelector('button[type="submit"]');
+      if (!btn) return;
+      if (state === 'submitting') {
+        btn.setAttribute('data-label', btn.textContent);
+        btn.textContent = 'Sending…';
+        btn.disabled = true;
+      } else {
+        var original = btn.getAttribute('data-label');
+        if (original) btn.textContent = original;
+        btn.disabled = false;
+      }
+    }
+
+    function fail(reason) {
+      // Coarse reason enum only — provider response bodies are never read
+      // into, or sent as, event properties.
+      track('form_failure', { form: FORM_ID, reason: reason });
+      setFormState('error');
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      // Native validation normally blocks invalid submits before this
+      // handler runs; this guards programmatic and edge paths.
+      if (email && !email.checkValidity()) {
+        fail('validation');
+        return;
+      }
+      setFormState('submitting');
+      var controller = ('AbortController' in window) ? new AbortController() : null;
+      var timer = controller && setTimeout(function () { controller.abort(); }, 10000);
+      fetch(form.action, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(form),
+        signal: controller && controller.signal
+      }).then(function (res) {
+        if (timer) clearTimeout(timer);
+        if (res.ok) {
+          track('form_success', { form: FORM_ID });
+          setFormState('success');
+        } else {
+          fail('provider_error');
+        }
+      }).catch(function () {
+        if (timer) clearTimeout(timer);
+        fail('network');
+      });
+    });
   })();
 </script>
 </body>
