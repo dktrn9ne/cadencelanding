@@ -103,7 +103,7 @@
     align-items:center;
     justify-content:center;
     gap:8px;
-    min-height:42px;
+    min-height:44px;
     padding:0 18px;
     border-radius:8px;
     border:1px solid transparent;
@@ -141,6 +141,7 @@
   .brand-word{font-family:var(--display); font-size:21px; font-weight:700; line-height:1}
   .brand-xrp{font-family:var(--mono); font-size:9px; letter-spacing:.35em; color:var(--clay); margin-top:2px}
   .nav-links{display:flex; align-items:center; gap:28px; color:#59584f; font-size:13px; font-weight:600}
+  .nav-links a{display:inline-flex; align-items:center; min-height:44px}
   .nav-links a:hover{color:var(--forest)}
   .nav .btn{white-space:nowrap}
   .cta-label-short{display:none}
@@ -413,11 +414,12 @@
   .final h2 em{color:var(--clay); font-style:italic}
   .final p{color:#b9bfb4; line-height:1.7; max-width:560px}
   .form{display:flex; gap:10px; flex-wrap:wrap; margin-top:24px}
-  .form input{min-height:42px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
+  .form input{min-height:44px; min-width:240px; flex:0 1 340px; border:1px solid var(--line-dark); border-radius:8px; padding:0 14px; background:var(--forest-2); color:#fff8ec}
   .form input::placeholder{color:#858c84}
   footer{padding:34px 0; border-top:1px solid var(--line)}
   .foot{display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap}
   .foot-links{display:flex; gap:22px; color:#68645a; font-size:13px}
+  .foot-links a{display:inline-flex; align-items:center; min-height:44px}
 
   @keyframes menu-in{
     from{opacity:0; transform:translateY(-8px)}
@@ -494,6 +496,9 @@
     section{padding:64px 0}
     .big-c svg{width:144px; height:144px}
     .foot-links{width:100%; justify-content:space-between}
+    .form{flex-direction:column; align-items:stretch}
+    .form input{min-width:0; flex:0 0 auto}
+    .form .btn{width:100%}
     .pattern-lines{display:none}
     .pattern-wave{left:-42vw; width:184vw; opacity:.18}
     .pattern-dots{opacity:.28}
