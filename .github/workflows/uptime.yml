@@ -1,0 +1,71 @@
+# Uptime (PR 8) — three dependencies, three separate signals.
+#
+# The landing page, the app destination, and the form endpoint fail
+# independently; killing one dependency's URL flips exactly one job. The form
+# endpoint is POST-only by design: a 400 on GET is its healthy signature (a
+# naive GET-200 monitor would alarm forever). No scheduled real POSTs — a
+# manual workflow_dispatch additionally runs one real POST e2e (lands in the
+# Formspree inbox once per dispatch).
+#
+# Supplement, not replace: scheduled Actions can be delayed during GitHub
+# incidents. docs/monitoring.md documents the hosted-monitor equivalent
+# (recommended alert path).
+name: Uptime
+
+on:
+  schedule:
+    # Every 15 minutes, off the top-of-hour crunch.
+    - cron: '7,22,37,52 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  landing-page:
+    name: Landing page (GET 200)
+    runs-on: ubuntu-latest
+    steps:
+      - name: GET https://cadencelanding.vercel.app/
+        run: curl -fsS -o /dev/null --max-time 20 https://cadencelanding.vercel.app/
+
+  app-destination:
+    name: App destination (GET 200)
+    runs-on: ubuntu-latest
+    steps:
+      - name: GET https://cadence-green-ten.vercel.app/
+        run: curl -fsS -o /dev/null --max-time 20 https://cadence-green-ten.vercel.app/
+
+  form-endpoint:
+    name: Formspree endpoint (400-signature) + status page
+    runs-on: ubuntu-latest
+    steps:
+      # POST-only endpoint: a 400 on GET is the documented healthy signature.
+      - name: Assert the GET-400 healthy signature
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 https://formspree.io/f/mojgkzay)
+          if [ "$code" != "400" ]; then
+            echo "::error::form endpoint unhealthy: got HTTP $code, expected 400 (POST-only signature)"
+            exit 1
+          fi
+          echo "form endpoint healthy (GET returned the expected 400)"
+      - name: GET https://status.formspree.io/
+        run: curl -fsS -o /dev/null --max-time 20 https://status.formspree.io/
+
+  form-e2e-real-post:
+    # Manual dispatch only: one real POST that lands in the Formspree inbox.
+    name: Real POST e2e (manual dispatch)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: POST one real submission
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+            -H "Accept: application/json" \
+            -X POST https://formspree.io/f/mojgkzay \
+            -d "email=uptime-probe%40example.com")
+          if [ "$code" != "200" ]; then
+            echo "::error::real POST e2e failed: got HTTP $code, expected 200"
+            exit 1
+          fi
+          echo "real POST e2e OK (submission lands in the Formspree inbox)"
