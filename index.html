@@ -273,6 +273,8 @@
   h1 em{color:var(--clay); font-style:italic}
   .hero-copy{max-width:560px; color:#555348; font-size:17px; line-height:1.7; margin:0 0 28px}
   .hero-actions{display:flex; flex-wrap:wrap; gap:12px; margin-bottom:20px}
+  .hero-text-link{align-self:center; color:#555348; font-size:13px; font-weight:600; text-decoration:underline; text-underline-offset:5px; text-decoration-color:rgba(214,90,58,.55)}
+  .hero-text-link:hover{color:var(--forest)}
   .hero-footnote{max-width:560px; color:#706d62; font-size:12.5px; line-height:1.6}
 
   .pay-card{
@@ -327,31 +329,26 @@
   h2{font-family:var(--display); font-size:clamp(30px, 4.2vw, 48px); line-height:1.08; margin:0; max-width:760px}
   .lead{max-width:620px; color:#5f5b51; line-height:1.7; margin:14px 0 0}
 
-  .meaning{
-    display:grid;
-    grid-template-columns:minmax(240px,.8fr) 1fr minmax(220px,.7fr);
-    border:1px solid var(--line);
-    background:rgba(255,249,236,.55);
-    border-radius:8px;
-    overflow:hidden;
-  }
-  .meaning-mark,.meaning-arrow,.meaning-list{padding:32px}
-  .meaning-mark{display:grid; place-items:center; border-right:1px solid var(--line)}
   .big-c svg{width:190px; height:190px}
-  .meaning-list{display:grid; gap:20px; border-right:1px solid var(--line)}
-  .meaning-item{display:grid; grid-template-columns:42px 1fr; gap:14px; align-items:start}
-  .meaning-icon{width:42px; height:42px; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; color:var(--clay); background:var(--cream)}
-  .meaning-item strong{display:block; font-size:14px; margin-bottom:5px}
-  .meaning-item span{color:#625f56; font-size:13px; line-height:1.5}
-  .meaning-arrow{display:flex; flex-direction:column; justify-content:center; gap:18px}
-  .up-arrow{font-size:56px; line-height:1; color:var(--clay)}
-  .meaning-arrow strong{color:var(--clay)}
-  .meaning-arrow p{margin:0; color:#625f56; line-height:1.6; font-size:14px}
+  .audience-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  .audience{padding:26px}
+  .audience ul{margin:0; padding:0; list-style:none; display:grid; gap:12px}
+  .audience li{display:grid; grid-template-columns:8px 1fr; gap:12px; align-items:start; color:#625f56; font-size:13.5px; line-height:1.6}
+  .audience li:before{content:""; width:6px; height:6px; border-radius:50%; background:var(--clay); margin-top:7px}
+  .audience.dark li{color:#b9bfb4}
+  .mark-grid{display:grid; grid-template-columns:220px 1fr; gap:48px; align-items:center}
 
-  #product{position:relative; overflow:hidden}
-  #product .pattern-rings{right:calc(50% - 630px); top:128px; opacity:.75}
-  #product .pattern-lines{left:calc(50% - 660px); bottom:62px}
-  .product-grid{position:relative; z-index:1; display:grid; grid-template-columns:1fr 1fr; gap:18px}
+  #roadmap{position:relative; overflow:hidden}
+  #roadmap .section-head,
+  #roadmap .roadmap-list{position:relative; z-index:1}
+  #roadmap .pattern-rings{right:calc(50% - 630px); top:96px; opacity:.6}
+  .roadmap-list{display:grid; gap:10px; max-width:860px}
+  .roadmap-item{border:1px solid var(--line); border-radius:8px; background:rgba(255,249,236,.58); padding:0 20px}
+  .roadmap-item summary{display:flex; align-items:center; gap:14px; min-height:58px; cursor:pointer; font-weight:600; font-size:14px; list-style:none}
+  .roadmap-item summary::-webkit-details-marker{display:none}
+  .roadmap-item summary .mono{color:var(--clay); font-size:11px; letter-spacing:.14em}
+  .roadmap-item summary .status{margin-left:auto; color:#787369}
+  .roadmap-item p{margin:0 0 18px; color:#625f56; font-size:13.5px; line-height:1.6; max-width:640px}
   .panel{
     border:1px solid var(--line);
     background:rgba(255,249,236,.62);
@@ -362,44 +359,14 @@
   .panel h3{margin:0 0 10px; font-size:18px}
   .panel p{margin:0; color:#625f56; line-height:1.6; font-size:13.5px}
   .panel.dark p{color:#b9bfb4}
-  .dashboard{grid-row:span 2}
-  .dash-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px}
-  .dash-pill{font-family:var(--mono); color:var(--sun); font-size:10px; letter-spacing:.12em}
-  .recipient{display:grid; gap:12px}
-  .recipient-row{
-    display:grid;
-    grid-template-columns:36px 1fr auto;
-    gap:12px;
-    align-items:center;
-    padding:14px;
-    border:1px solid var(--line-dark);
-    border-radius:8px;
-    background:rgba(22,33,25,.52);
-  }
-  .avatar{width:36px; height:36px; border-radius:50%; background:var(--cream); color:var(--forest); display:grid; place-items:center; font-weight:800}
-  .recipient-row strong{display:block; font-size:13px}
-  .recipient-row span{display:block; color:#9da69d; font-size:11px; margin-top:2px}
-  .sent{font-family:var(--mono); color:var(--clay); font-size:13px}
-  .card-art{
-    aspect-ratio:1.7/1;
-    border-radius:14px;
-    background:linear-gradient(145deg, #fff8ec, #e8dabc);
-    color:var(--forest);
-    padding:18px;
-    margin-top:18px;
-    box-shadow:0 18px 30px rgba(31,45,36,.16);
-    transform:rotate(-4deg);
-    max-width:340px;
-  }
-  .card-art .chip{width:38px; height:28px; border-radius:6px; background:linear-gradient(135deg, #d7c398, #f4e6b4); border:1px solid #bca875; margin:22px 0}
-  .card-art .visa{font-weight:800; letter-spacing:.08em; text-align:right}
 
-  #ecosystem{position:relative; overflow:hidden}
-  #ecosystem .section-head,
-  #ecosystem .ecosystem{position:relative; z-index:1}
-  #ecosystem .pattern-dots{left:calc(50% + 300px); top:96px; width:150px; height:110px; opacity:.42}
-  .ecosystem{display:grid; grid-template-columns:repeat(4,1fr); gap:14px}
-  .eco-card{
+  #capabilities{position:relative; overflow:hidden}
+  #capabilities .section-head,
+  #capabilities .capability-grid{position:relative; z-index:1}
+  #capabilities .pattern-dots{left:calc(50% + 300px); top:96px; width:150px; height:110px; opacity:.42}
+  .capability-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .capability-card.feature{grid-column:span 2}
+  .capability-card{
     min-height:170px;
     border:1px solid var(--line);
     border-radius:8px;
@@ -409,12 +376,10 @@
     flex-direction:column;
     gap:14px;
   }
-  .eco-icon{width:40px; height:40px; border:1px solid var(--line); border-radius:50%; color:var(--clay); display:grid; place-items:center}
-  .eco-card h3{font-size:14px; letter-spacing:.02em; margin:0}
-  .eco-card p{font-size:12.5px; color:#625f56; line-height:1.5; margin:0; flex:1}
+  .capability-icon{width:40px; height:40px; border:1px solid var(--line); border-radius:50%; color:var(--clay); display:grid; place-items:center}
+  .capability-card h3{font-size:14px; letter-spacing:.02em; margin:0}
+  .capability-card p{font-size:12.5px; color:#625f56; line-height:1.5; margin:0; flex:1}
   .status{font-family:var(--mono); font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--clay)}
-  .coming{background:rgba(220,205,178,.34)}
-  .coming .status{color:#787369}
 
   .steps{display:grid; grid-template-columns:repeat(3,1fr); border:1px solid var(--line); border-radius:8px; overflow:hidden; background:rgba(255,249,236,.5)}
   .step{padding:28px; border-right:1px solid var(--line)}
@@ -452,18 +417,17 @@
 
   @media(max-width:920px){
     .nav-links{display:none}
-    .hero-grid,.meaning,.product-grid{grid-template-columns:1fr}
-    .meaning-mark,.meaning-list{border-right:0; border-bottom:1px solid var(--line)}
-    .metrics-grid,.ecosystem{grid-template-columns:1fr 1fr}
+    .hero-grid,.audience-grid,.mark-grid{grid-template-columns:1fr}
+    .mark-grid{gap:28px}
+    .metrics-grid,.capability-grid{grid-template-columns:1fr 1fr}
     .metric:nth-child(2){border-right:0}
     .metric:nth-child(1),.metric:nth-child(2){border-bottom:1px solid var(--line)}
     .steps{grid-template-columns:1fr}
     .step{border-right:0; border-bottom:1px solid var(--line)}
     .step:last-child{border-bottom:0}
     .pattern-wave{left:-30vw; width:160vw; opacity:.22}
-    #product .pattern-rings{right:-70px; top:160px}
-    #product .pattern-lines{display:none}
-    #ecosystem .pattern-dots{left:auto; right:16px; top:110px}
+    #roadmap .pattern-rings{right:-70px; top:160px}
+    #capabilities .pattern-dots{left:auto; right:16px; top:110px}
   }
   @media(max-width:600px){
     .wrap{width:min(100% - 28px, 1180px)}
@@ -472,7 +436,8 @@
     .hero{padding-top:54px}
     .hero-grid{gap:34px}
     .pay-card{padding:20px}
-    .pay-stats,.metrics-grid,.ecosystem{grid-template-columns:1fr}
+    .pay-stats,.metrics-grid,.capability-grid{grid-template-columns:1fr}
+    .capability-card.feature{grid-column:auto}
     .metric{border-right:0; border-bottom:1px solid var(--line)}
     .metric:last-child{border-bottom:0}
     section{padding:64px 0}
@@ -481,7 +446,7 @@
     .pattern-lines{display:none}
     .pattern-wave{left:-42vw; width:184vw; opacity:.18}
     .pattern-dots{opacity:.28}
-    #product .pattern-rings{width:126px; height:126px; right:-74px; top:190px; opacity:.5}
+    #roadmap .pattern-rings{width:126px; height:126px; right:-74px; top:190px; opacity:.5}
   }
 </style>
 </head>
@@ -502,12 +467,12 @@
       </span>
     </a>
     <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#what">What is Cadence</a>
       <a href="#who">Who it's for</a>
-      <a href="#product">Product</a>
-      <a href="#ecosystem">Ecosystem</a>
+      <a href="#capabilities">Available today</a>
       <a href="#how">How it works</a>
     </nav>
-    <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Set up your wallet</a>
+    <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Start streaming pay</a>
   </div>
 </header>
 
@@ -526,14 +491,14 @@
     <div class="pattern pattern-dots" aria-hidden="true"></div>
     <div class="wrap hero-grid">
       <div>
-        <div class="eyebrow">Real-time RLUSD payroll</div>
-        <h1>Payroll <br>with a <em>pulse.</em></h1>
-        <p class="hero-copy">Cadence streams income in small, steady payments instead of holding work behind a two-week wait. Built on XRP, designed for humans, and shaped for the people who actually earn the money.</p>
+        <div class="eyebrow">Real-time RLUSD payroll on the XRP Ledger</div>
+        <h1>Pay contractors the moment work happens.</h1>
+        <p class="hero-copy">Cadence turns payroll into scheduled RLUSD payments on the XRP Ledger. Set a pay rhythm for each person on your team; Cadence divides the weekly total into small RLUSD payments that settle wallet to wallet in 3–5 seconds — no pay cycle holding anyone's money back.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="https://cadence-green-ten.vercel.app/">Start streaming pay</a>
-          <a class="btn btn-secondary" href="#product">View the product</a>
+          <a class="hero-text-link" href="#what">See how it works</a>
         </div>
-        <p class="hero-footnote">No custodial account. Payments are signed from a wallet the worker controls and every stream becomes portable proof of income.</p>
+        <p class="hero-footnote">Non-custodial: payments are signed from wallets you and your workers control, and every payment lands on-chain as portable proof of income.</p>
       </div>
 
       <aside class="pay-card" aria-label="Live streaming payment preview">
@@ -568,157 +533,39 @@
     </div>
   </div>
 
+  <section id="what">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">What is Cadence</div>
+        <h2>Payroll that pays as work happens, not two weeks later.</h2>
+        <p class="lead">Cadence is a payroll dashboard for businesses. You give each person a weekly amount and a pay rhythm; Cadence splits that total into small RLUSD payments and sends them on schedule over the XRP Ledger. You fund the stream — Cadence keeps the time. Every payment settles wallet to wallet in seconds and lands on-chain, where your team can export real payment history as proof of income.</p>
+      </div>
+    </div>
+  </section>
+
   <section id="who">
     <div class="wrap">
       <div class="section-head">
-        <div class="kicker">Brand mark meaning</div>
-        <h2>Three paths. One rhythm. Infinite potential.</h2>
+        <div class="kicker">Who it's for</div>
+        <h2>Built for the people who pay — and the people who get paid.</h2>
       </div>
-      <div class="meaning">
-        <div class="meaning-mark">
-          <div class="big-c" aria-hidden="true">
-            <svg viewBox="0 0 64 64" fill="none">
-              <path d="M44 16a20 20 0 1 0 0 32" stroke="#1F2D24" stroke-width="6" stroke-linecap="round"/>
-              <path d="M49 10a28 28 0 1 0 0 44" stroke="#1F2D24" stroke-width="4" stroke-linecap="round"/>
-              <path d="M39 24a11 11 0 1 0 0 16" stroke="#1F2D24" stroke-width="5" stroke-linecap="round"/>
-            </svg>
-          </div>
+      <div class="audience-grid">
+        <div class="panel dark audience">
+          <h3>For businesses</h3>
+          <ul>
+            <li>Pay contractors and distributed teams without running a payroll cycle per region.</li>
+            <li>Set a pay rhythm for each person — their weekly total, divided into payments that land while work happens.</li>
+            <li>No float and no custodian: payments settle wallet to wallet in seconds.</li>
+          </ul>
         </div>
-        <div class="meaning-list">
-          <div class="meaning-item">
-            <div class="meaning-icon">C</div>
-            <div><strong>Creator</strong><span>You bring the talent, time, and output.</span></div>
-          </div>
-          <div class="meaning-item">
-            <div class="meaning-icon">$</div>
-            <div><strong>Employer or business</strong><span>Cadence powers the payment without replacing every payroll workflow.</span></div>
-          </div>
-          <div class="meaning-item">
-            <div class="meaning-icon">X</div>
-            <div><strong>Protocol</strong><span>The XRPL rail moves money instantly, securely, and with on-chain proof.</span></div>
-          </div>
+        <div class="panel audience">
+          <h3>For workers</h3>
+          <ul>
+            <li>Stop waiting on the two-week cycle — pay arrives the moment work happens.</li>
+            <li>Money lands in the wallet you control, not a company account.</li>
+            <li>Every payment is on-chain and exportable as proof of income from the Cadence app.</li>
+          </ul>
         </div>
-        <div class="meaning-arrow">
-          <div class="up-arrow" aria-hidden="true">↑</div>
-          <strong>Hidden upward arrow</strong>
-          <p>Continuous growth, financial elevation, and money moving forward.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="product">
-    <div class="pattern-rings" aria-hidden="true"></div>
-    <div class="pattern-lines" aria-hidden="true"></div>
-    <div class="wrap">
-      <div class="section-head">
-        <div class="kicker">Product</div>
-        <h2>Streaming payroll for people who cannot afford to wait.</h2>
-        <p class="lead">Cadence turns pay periods into visible, verifiable income streams for freelancers, studios, remote teams, and payroll partners.</p>
-      </div>
-      <div class="product-grid">
-        <div class="panel dark dashboard">
-          <div class="dash-top">
-            <h3>Live pay stream</h3>
-            <div class="dash-pill">Cadence Pulse</div>
-          </div>
-          <div class="recipient">
-            <div class="recipient-row">
-              <div class="avatar">M</div>
-              <div><strong>Maurice Thomas</strong><span>RLUSD stream active</span></div>
-              <div class="sent">$0.7775</div>
-            </div>
-            <div class="recipient-row">
-              <div class="avatar">A</div>
-              <div><strong>Ava Johnson</strong><span>Next packet in 15 seconds</span></div>
-              <div class="sent">$0.2240</div>
-            </div>
-            <div class="recipient-row">
-              <div class="avatar">N</div>
-              <div><strong>Noah Patel</strong><span>Proof of income ready</span></div>
-              <div class="sent">$1.1050</div>
-            </div>
-          </div>
-        </div>
-        <div class="panel">
-          <h3>Tempo</h3>
-          <p>Choose a payment frequency once, then let Cadence divide the weekly total into predictable micro-payments.</p>
-        </div>
-        <div class="panel">
-          <h3>Verse</h3>
-          <p>Pay periods become transparent records instead of hidden accounting events.</p>
-        </div>
-        <div class="panel">
-          <h3>Payroll card</h3>
-          <p>A worker-facing credential for income, payouts, and proof.</p>
-          <div class="card-art" aria-hidden="true">
-            <strong>Cadence</strong>
-            <div class="brand-xrp">ON XRP</div>
-            <div class="chip"></div>
-            <div class="visa">VISA</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="ecosystem">
-    <div class="pattern pattern-dots" aria-hidden="true"></div>
-    <div class="wrap">
-      <div class="section-head">
-        <div class="kicker">Cadence ecosystem</div>
-        <h2>Core payroll now. The full rhythm is more to come.</h2>
-        <p class="lead">The landing page now separates what is available from product names that are part of the broader brand system but not yet included.</p>
-      </div>
-      <div class="ecosystem">
-        <article class="eco-card">
-          <div class="eco-icon">C</div>
-          <h3>Cadence</h3>
-          <p>The platform for streaming RLUSD payroll on XRP.</p>
-          <div class="status">Available now</div>
-        </article>
-        <article class="eco-card">
-          <div class="eco-icon">T</div>
-          <h3>Tempo</h3>
-          <p>Payment frequency controls for teams and contractors.</p>
-          <div class="status">Included</div>
-        </article>
-        <article class="eco-card coming">
-          <div class="eco-icon">L</div>
-          <h3>Loop</h3>
-          <p>Recurring payroll automations and long-running schedules.</p>
-          <div class="status">More to come</div>
-        </article>
-        <article class="eco-card coming">
-          <div class="eco-icon">B</div>
-          <h3>Bridge</h3>
-          <p>Cross-border workflows for teams paying across regions.</p>
-          <div class="status">More to come</div>
-        </article>
-        <article class="eco-card coming">
-          <div class="eco-icon">E</div>
-          <h3>Encore</h3>
-          <p>Bonuses, advances, and extra compensation moments.</p>
-          <div class="status">More to come</div>
-        </article>
-        <article class="eco-card coming">
-          <div class="eco-icon">P</div>
-          <h3>Pulse</h3>
-          <p>Deeper analytics for stream health and payroll reporting.</p>
-          <div class="status">More to come</div>
-        </article>
-        <article class="eco-card coming">
-          <div class="eco-icon">H</div>
-          <h3>Harmony</h3>
-          <p>Team payroll coordination for larger operator workflows.</p>
-          <div class="status">More to come</div>
-        </article>
-        <article class="eco-card coming">
-          <div class="eco-icon">S</div>
-          <h3>Studio</h3>
-          <p>A business dashboard for high-volume payroll operations.</p>
-          <div class="status">More to come</div>
-        </article>
       </div>
     </div>
   </section>
@@ -749,6 +596,107 @@
     </div>
   </section>
 
+  <section id="capabilities">
+    <div class="pattern pattern-dots" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Available today</div>
+        <h2>Everything here is shipped and running on XRPL.</h2>
+        <p class="lead">Five capabilities, live in the Cadence app today. Nothing on this list is a prototype or a promise.</p>
+      </div>
+      <div class="capability-grid">
+        <article class="capability-card feature">
+          <div class="capability-icon">C</div>
+          <h3>Scheduled RLUSD payments</h3>
+          <p>Add a recipient, an amount, and a rhythm. Cadence sends each installment as its own RLUSD Payment on XRPL — source tag 2606250005 — settled wallet to wallet in 3–5 seconds.</p>
+          <div class="status">Available today</div>
+        </article>
+        <article class="capability-card">
+          <div class="capability-icon">T</div>
+          <h3>Pay rhythm controls — Tempo</h3>
+          <p>Divide a weekly total into predictable micro-payments on the schedule you choose.</p>
+          <div class="status">Available today</div>
+        </article>
+        <article class="capability-card">
+          <div class="capability-icon">V</div>
+          <h3>On-chain records — Verse</h3>
+          <p>Pay periods become transparent records instead of hidden accounting events.</p>
+          <div class="status">Available today</div>
+        </article>
+        <article class="capability-card">
+          <div class="capability-icon">P</div>
+          <h3>Income proof</h3>
+          <p>Built from real account_tx reads filtered to successful incoming RLUSD from your Cadence employer wallet — exportable by the worker.</p>
+          <div class="status">Available today</div>
+        </article>
+        <article class="capability-card">
+          <div class="capability-icon">W</div>
+          <h3>Wallet-native, non-custodial</h3>
+          <p>Web access via XRPL Connect (Xaman, Crossmark, GemWallet, or Xyra) or desktop wallet import. No custodian holds funds.</p>
+          <div class="status">Available today</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="pattern-rings" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Roadmap</div>
+        <h2>Planned — the full rhythm, over time.</h2>
+        <p class="lead">The core is available today. These products are on the roadmap.</p>
+      </div>
+      <div class="roadmap-list">
+        <details class="roadmap-item">
+          <summary><span class="mono">LOOP</span> Recurring payroll automations <span class="status">Planned</span></summary>
+          <p>Long-running schedules that renew without manual setup.</p>
+        </details>
+        <details class="roadmap-item">
+          <summary><span class="mono">BRIDGE</span> Cross-border payroll workflows <span class="status">Planned</span></summary>
+          <p>Workflows for teams paying contractors across regions.</p>
+        </details>
+        <details class="roadmap-item">
+          <summary><span class="mono">ENCORE</span> Bonuses and extra payouts <span class="status">Planned</span></summary>
+          <p>Bonuses, advances, and extra compensation moments.</p>
+        </details>
+        <details class="roadmap-item">
+          <summary><span class="mono">PULSE</span> Stream analytics <span class="status">Planned</span></summary>
+          <p>Deeper analytics for stream health and payroll reporting.</p>
+        </details>
+        <details class="roadmap-item">
+          <summary><span class="mono">HARMONY</span> Team payroll coordination <span class="status">Planned</span></summary>
+          <p>Coordination for larger operator workflows.</p>
+        </details>
+        <details class="roadmap-item">
+          <summary><span class="mono">STUDIO</span> High-volume operations dashboard <span class="status">Planned</span></summary>
+          <p>A business dashboard for high-volume payroll operations.</p>
+        </details>
+        <details class="roadmap-item">
+          <summary><span class="mono">PAYROLL CARD</span> Worker-facing credential <span class="status">Planned</span></summary>
+          <p>A credential for income, payouts, and proof — designed after the core payroll loop is complete.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="mark">
+    <div class="wrap mark-grid">
+      <div class="big-c" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none">
+          <path d="M44 16a20 20 0 1 0 0 32" stroke="#1F2D24" stroke-width="6" stroke-linecap="round"/>
+          <path d="M49 10a28 28 0 1 0 0 44" stroke="#1F2D24" stroke-width="4" stroke-linecap="round"/>
+          <path d="M39 24a11 11 0 1 0 0 16" stroke="#1F2D24" stroke-width="5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="kicker">The mark</div>
+        <h2>Three arcs. One upward rhythm.</h2>
+        <p class="lead">Three arcs trace the person who earns, the business that pays, and the rail that moves the money. Hidden in the negative space is an upward arrow — continuous growth, money moving forward.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="final" id="get-started">
     <div class="pattern pattern-wave" aria-hidden="true">
       <svg viewBox="0 0 1200 118" preserveAspectRatio="none">
@@ -763,8 +711,8 @@
     <div class="pattern-lines" aria-hidden="true"></div>
     <div class="wrap">
       <div class="kicker">Move money at the speed of work</div>
-      <h2>Your income. Your cadence. <br><em>Real ownership, built on XRP.</em></h2>
-      <p>Start with real-time payroll today. The rest of the Cadence ecosystem will arrive as the product grows.</p>
+      <h2>Payroll without the pay cycle.<br><em>Real ownership, built on the XRP Ledger.</em></h2>
+      <p>Start with one contractor or your whole distributed team. Set each person's rhythm, fund the stream, and every RLUSD payment settles wallet to wallet in seconds — on-chain, as portable proof of income.</p>
       <form class="form" action="https://formspree.io/f/mojgkzay" method="POST">
         <input type="email" name="email" placeholder="you@company.com" required>
         <button class="btn btn-primary" type="submit">Get started</button>
@@ -789,8 +737,8 @@
       </span>
     </div>
     <div class="foot-links">
-      <a href="#product">Product</a>
-      <a href="#ecosystem">Ecosystem</a>
+      <a href="#capabilities">Available today</a>
+      <a href="#roadmap">Roadmap</a>
       <a href="#get-started">Get started</a>
     </div>
   </div>
