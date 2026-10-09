@@ -61,9 +61,12 @@ test('every app CTA is an identical Launch Cadence anchor with a mainnet disclos
   }
   // The hero disclosure carries the full sentence; nav gets the compact line.
   assert.match(doc.getElementById('hero-disclosure').textContent, /XRPL mainnet — real RLUSD, real transactions/);
-  // "View the product" stays an in-page secondary anchor with no funnel claim.
-  const view = doc.querySelector('.hero-actions a.btn-secondary');
-  assert.equal(view.getAttribute('href'), '#product');
+  // The secondary affordance beside the primary CTA stays in-page — no funnel claim,
+  // and no second primary competing with the app CTA.
+  assert.equal(doc.querySelectorAll('.hero-actions a.btn-primary').length, 1, 'exactly one primary action');
+  const secondary = doc.querySelector('.hero-actions a:not(.btn-primary)');
+  assert.ok(secondary, 'an in-page secondary affordance exists beside the primary CTA');
+  assert.doesNotMatch(secondary.getAttribute('href'), /^https?:/);
 });
 
 test('footer links to the request-access route, and "Get started" is retired', () => {
